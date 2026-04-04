@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RobloxVerify - Login</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="card">
+            <h1>RobloxVerify</h1>
+            
+            <!-- Login Form -->
+            <div id="login-box">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <input type="email" id="login-email" placeholder="Email" required>
+                    <input type="password" id="login-password" placeholder="Passwort" required>
+                    <button type="submit">Einloggen</button>
+                </form>
+                <p style="margin-top:15px; font-size:0.9em;">
+                    Kein Account? <a href="#" onclick="toggleForms()" style="color:#007bff;">Registrieren</a>
+                </p>
+            </div>
+
+            <!-- Register Form (Hidden by default) -->
+            <div id="register-box" class="hidden">
+                <h2>Registrieren</h2>
+                <form id="register-form">
+                    <input type="text" id="username" placeholder="Gewünschter Username" required>
+                    <input type="email" id="email" placeholder="Email" required>
+                    <input type="password" id="password" placeholder="Passwort" required>
+                    <button type="submit">Account erstellen</button>
+                </form>
+                <p style="margin-top:15px; font-size:0.9em;">
+                    Schon einen Account? <a href="#" onclick="toggleForms()" style="color:#007bff;">Login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+    <script>
+        function toggleForms() {
+            document.getElementById('login-box').classList.toggle('hidden');
+            document.getElementById('register-box').classList.toggle('hidden');
+        }
+    </script>
+</body>
+</html>
