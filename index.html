@@ -3,123 +3,87 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Security AI | Anti-Cheat Generator</title>
+    <title>Echte Roblox AI | Powered by HuggingFace</title>
     <style>
-        :root { --bg: #050505; --card: #111; --accent: #00ff88; --text: #eee; }
-        body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { width: 90%; max-width: 700px; background: var(--card); padding: 2.5rem; border-radius: 16px; border: 1px solid #333; box-shadow: 0 0 40px rgba(0, 255, 136, 0.05); }
-        h1 { text-align: center; color: var(--accent); margin-bottom: 5px; }
-        p.subtitle { text-align: center; color: #888; margin-bottom: 30px; }
+        :root { --bg: #0a0a0b; --card: #161618; --accent: #6d28d9; --text: #fff; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .container { width: 90%; max-width: 700px; background: var(--card); padding: 2rem; border-radius: 16px; border: 1px solid #333; box-shadow: 0 0 50px rgba(109, 40, 217, 0.1); }
+        h1 { text-align: center; background: linear-gradient(90deg, #a78bfa, #6d28d9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
+        p { text-align: center; color: #888; margin-bottom: 30px; }
         
-        .input-group { position: relative; margin-bottom: 20px; }
-        textarea { width: 100%; height: 100px; background: #000; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 8px; font-size: 1rem; resize: none; box-sizing: border-box; font-family: monospace; }
+        textarea { width: 100%; height: 120px; background: #000; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 8px; font-size: 1rem; resize: none; box-sizing: border-box; margin-bottom: 15px; }
         textarea:focus { outline: none; border-color: var(--accent); }
         
-        button.generate-btn { width: 100%; padding: 15px; background: linear-gradient(45deg, #00b09b, #96c93d); color: #000; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
-        button.generate-btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 255, 136, 0.3); }
-        
-        #resultArea { margin-top: 25px; display: none; animation: fadeIn 0.5s; }
-        .code-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .code-label { font-size: 0.9rem; color: #888; font-weight: bold; }
-        
-        .code-block { background: #0a0a0a; padding: 20px; border-radius: 8px; font-family: 'Consolas', monospace; color: #00ff88; font-size: 0.9rem; overflow-x: auto; white-space: pre-wrap; border: 1px solid #222; max-height: 400px; overflow-y: auto; }
-        
-        .copy-btn { background: #333; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 0.9rem; margin-top: 10px; width: 100%; }
-        .copy-btn:hover { background: #444; }
+        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
+        button:hover { background: #5b21b6; }
+        button:disabled { background: #444; cursor: not-allowed; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        #resultArea { margin-top: 25px; display: none; }
+        .code-block { background: #050505; padding: 20px; border-radius: 8px; font-family: 'Consolas', monospace; color: #0f0; font-size: 0.9rem; overflow-x: auto; white-space: pre-wrap; border: 1px solid #333; min-height: 100px; }
+        
+        .loading { text-align: center; color: #888; margin-top: 20px; display: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>🛡️ Roblox Security AI</h1>
-        <p class="subtitle">Generiere serverseitigen Anti-Cheat Code.</p>
+        <h1>🤖 Echte Roblox AI</h1>
+        <p>Nutzt Salesforce CodeGen Model via HuggingFace</p>
         
-        <div class="input-group">
-            <textarea id="prompt" placeholder="z.B. Erstelle einen Anti-Cheat gegen Speed Hacks und Fly Hacks..."></textarea>
-        </div>
+        <textarea id="prompt" placeholder="Beschreibe genau, was der Script tun soll...&#10;z.B. Ein Script, das jeden Spieler kickt, der schneller als 50 Studs läuft."></textarea>
         
-        <button class="generate-btn" onclick="generateSecurity()">Schutz Generieren</button>
+        <button id="genBtn" onclick="generateAI()">Code Generieren ✨</button>
+        <div class="loading" id="loading">KI denkt nach... (das kann 10-20 Sek dauern)</div>
         
         <div id="resultArea">
-            <div class="code-header">
-                <span class="code-label">SERVER SCRIPT (Lua)</span>
-            </div>
             <div class="code-block" id="codeOutput"></div>
-            <button class="copy-btn" onclick="copyCode()">Code Kopieren & In ServerScriptService einfügen</button>
+            <button onclick="copyCode()" style="margin-top:10px; background:#333;">Kopieren</button>
         </div>
     </div>
 
     <script>
-        function generateSecurity() {
-            const input = document.getElementById('prompt').value.toLowerCase();
-            const output = document.getElementById('codeOutput');
+        async function generateAI() {
+            const prompt = document.getElementById('prompt').value;
+            const btn = document.getElementById('genBtn');
+            const loading = document.getElementById('loading');
             const resultArea = document.getElementById('resultArea');
-            
-            let luaCode = `-- 🛡️ Generated by Roblox Security AI\n-- Füge dies in ein Script in "ServerScriptService" ein\n\nlocal Players = game:GetService("Players")\n\n`;
+            const output = document.getElementById('codeOutput');
 
-            // Logik für Speed/Fly Hacks
-            if (input.includes("speed") || input.includes("fly") || input.includes("cheat") || input.includes("hack")) {
-                luaCode += `-- 1. Anti-Speed & Anti-Fly Check
-game:GetService("RunService").Heartbeat:Connect(function()
-    for _, player in pairs(Players:GetPlayers()) do
-        local char = player.Character
-        if char and char:FindFirstChild("HumanoidRootPart") then
-            local root = char.HumanoidRootPart
-            local velocity = root.Velocity.Magnitude
-            
-            -- Wenn Spieler schneller als 100 Studs/sec fliegt (verdächtig)
-            if velocity > 100 and not player:IsAdmin() then -- IsAdmin musst du selbst definieren
-                warn("⚠️ Verdächtige Bewegung bei: " .. player.Name)
-                -- Optional: player:Kick("Exploiting detected")
-            end
-        end
-    end
-end)
+            if (!prompt) return alert("Bitte gib einen Prompt ein!");
 
-`;
+            btn.disabled = true;
+            loading.style.display = "block";
+            resultArea.style.display = "none";
+
+            try {
+                // Wir rufen UNSERE eigene Serverless Function auf, nicht direkt die API
+                const response = await fetch('/api/generate', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: prompt })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    output.innerText = "Fehler: " + data.error;
+                } else {
+                    output.innerText = data.code;
+                }
+                
+                resultArea.style.display = "block";
+            } catch (err) {
+                output.innerText = "Netzwerkfehler: " + err;
+                resultArea.style.display = "block";
+            } finally {
+                btn.disabled = false;
+                loading.style.display = "none";
             }
-
-            // Logik für Remote Events (Backpack/Item Hacks)
-            if (input.includes("remote") || input.includes("item") || input.includes("backpack")) {
-                luaCode += `-- 2. Anti-Remote Spam / Item Hack
-local RemoteFolder = game:GetService("ReplicatedStorage"):WaitForChild("Remotes") -- Passe Pfad an
-
--- Beispiel für einen geschützten Remote Event
--- RemoteEvent.OnServerEvent:Connect(function(player, data)
---     if not isValidData(data) then
---         player:Kick("Invalid Data Sent")
---     end
--- end)
-
-`;
-            }
-
-            // Logik für GUI Hacks
-            if (input.includes("gui") || input.includes("menu") || input.includes("screen")) {
-                luaCode += `-- 3. Anti-GUI Injection (Serverseitig schwer, aber möglich via Kick bei verdächtigen Requests)
-Players.PlayerAdded:Connect(function(player)
-    player.Chatted:Connect(function(msg)
-        if string.find(msg, "loadstring") or string.find(msg, "require") then
-            warn("🚫 Potenzieller Exploit-Versuch im Chat von: " .. player.Name)
-            player:Kick("Chat Exploiting")
-        end
-    end)
-end)
-
-`;
-            }
-
-            luaCode += `\nprint("✅ Security System Active")`;
-
-            output.innerText = luaCode;
-            resultArea.style.display = "block";
         }
 
         function copyCode() {
             const code = document.getElementById('codeOutput').innerText;
             navigator.clipboard.writeText(code);
-            alert("Anti-Cheat Code kopiert! \n1. Gehe in Roblox Studio\n2. Erstelle ein Script in ServerScriptService\n3. Füge den Code ein.");
+            alert("Kopiert!");
         }
     </script>
 </body>
