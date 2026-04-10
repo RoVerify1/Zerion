@@ -1,89 +1,52 @@
 <!DOCTYPE html>
-<html lang="de">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Echte Roblox AI | Powered by HuggingFace</title>
     <style>
-        :root { --bg: #0a0a0b; --card: #161618; --accent: #6d28d9; --text: #fff; }
-        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { width: 90%; max-width: 700px; background: var(--card); padding: 2rem; border-radius: 16px; border: 1px solid #333; box-shadow: 0 0 50px rgba(109, 40, 217, 0.1); }
-        h1 { text-align: center; background: linear-gradient(90deg, #a78bfa, #6d28d9); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        p { text-align: center; color: #888; margin-bottom: 30px; }
-        
-        textarea { width: 100%; height: 120px; background: #000; border: 1px solid #333; color: #fff; padding: 15px; border-radius: 8px; font-size: 1rem; resize: none; box-sizing: border-box; margin-bottom: 15px; }
-        textarea:focus { outline: none; border-color: var(--accent); }
-        
-        button { width: 100%; padding: 15px; background: var(--accent); color: white; border: none; border-radius: 8px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #5b21b6; }
-        button:disabled { background: #444; cursor: not-allowed; }
-
-        #resultArea { margin-top: 25px; display: none; }
-        .code-block { background: #050505; padding: 20px; border-radius: 8px; font-family: 'Consolas', monospace; color: #0f0; font-size: 0.9rem; overflow-x: auto; white-space: pre-wrap; border: 1px solid #333; min-height: 100px; }
-        
-        .loading { text-align: center; color: #888; margin-top: 20px; display: none; }
+        body { display: flex; height: 100vh; margin: 0; font-family: sans-serif; background: #1e1e1e; color: white; }
+        /* Linke Seite: Chat-Liste */
+        .sidebar { width: 250px; background: #2c2c2c; border-right: 1px solid #444; padding: 10px; }
+        /* Mitte: Chat-Fenster */
+        .chat-area { flex: 1; display: flex; flex-direction: column; }
+        .messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+        .input-area { padding: 20px; background: #2c2c2c; display: flex; gap: 10px; }
+        input { flex: 1; padding: 12px; border-radius: 5px; border: 1px solid #444; background: #3c3c3c; color: white; }
+        button { padding: 10px 20px; background: #00a2ff; border: none; color: white; border-radius: 5px; cursor: pointer; }
+        .code-display { font-family: monospace; background: #000; padding: 5px; color: #0f0; border-radius: 3px; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>🤖 Echte Roblox AI</h1>
-        <p>Nutzt Salesforce CodeGen Model via HuggingFace</p>
-        
-        <textarea id="prompt" placeholder="Beschreibe genau, was der Script tun soll...&#10;z.B. Ein Script, das jeden Spieler kickt, der schneller als 50 Studs läuft."></textarea>
-        
-        <button id="genBtn" onclick="generateAI()">Code Generieren ✨</button>
-        <div class="loading" id="loading">KI denkt nach... (das kann 10-20 Sek dauern)</div>
-        
-        <div id="resultArea">
-            <div class="code-block" id="codeOutput"></div>
-            <button onclick="copyCode()" style="margin-top:10px; background:#333;">Kopieren</button>
+    <div class="sidebar">
+        <h3>Verlauf</h3>
+        <div style="color: #888; font-size: 0.8em;">Keine Chats vorhanden</div>
+    </div>
+    <div class="chat-area">
+        <div class="messages" id="chatBox">
+            <div>KI: Hallo! Was soll ich heute für dein Roblox-Spiel erstellen?</div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="z.B. Mach mir ein Car Script...">
+            <button onclick="sendRequest()">Senden</button>
         </div>
     </div>
 
     <script>
-        async function generateAI() {
-            const prompt = document.getElementById('prompt').value;
-            const btn = document.getElementById('genBtn');
-            const loading = document.getElementById('loading');
-            const resultArea = document.getElementById('resultArea');
-            const output = document.getElementById('codeOutput');
+        async function sendRequest() {
+            const input = document.getElementById('userInput');
+            const chatBox = document.getElementById('chatBox');
+            if(!input.value) return;
 
-            if (!prompt) return alert("Bitte gib einen Prompt ein!");
-
-            btn.disabled = true;
-            loading.style.display = "block";
-            resultArea.style.display = "none";
-
-            try {
-                // Wir rufen UNSERE eigene Serverless Function auf, nicht direkt die API
-                const response = await fetch('/api/generate', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ prompt: prompt })
-                });
-
-                const data = await response.json();
-
-                if (data.error) {
-                    output.innerText = "Fehler: " + data.error;
-                } else {
-                    output.innerText = data.code;
-                }
-                
-                resultArea.style.display = "block";
-            } catch (err) {
-                output.innerText = "Netzwerkfehler: " + err;
-                resultArea.style.display = "block";
-            } finally {
-                btn.disabled = false;
-                loading.style.display = "none";
-            }
-        }
-
-        function copyCode() {
-            const code = document.getElementById('codeOutput').innerText;
-            navigator.clipboard.writeText(code);
-            alert("Kopiert!");
+            // Nachricht anzeigen
+            chatBox.innerHTML += `<div>Du: ${input.value}</div>`;
+            
+            // Hier würdest du dein Vercel-Backend anrufen
+            // Für den Test generieren wir eine zufällige ID
+            const connectCode = Math.floor(1000 + Math.random() * 9000);
+            
+            chatBox.innerHTML += `<div>KI: Generiere Script...</div>`;
+            setTimeout(() => {
+                chatBox.innerHTML += `<div>KI: Fertig! Nutze Code <b class="code-display">${connectCode}</b> im Roblox Plugin.</div>`;
+                input.value = "";
+            }, 1500);
         }
     </script>
 </body>
