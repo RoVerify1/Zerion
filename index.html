@@ -1,30 +1,100 @@
-const sendMessage = async () => {
-    const text = input.value.trim();
-    if (!text) return;
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Qwen AI Roblox Generator</title>
+    <style>
+        :root { --bg: #0d1117; --panel: #161b22; --text: #c9d1d9; --accent: #238636; }
+        body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); display: flex; justify-content: center; height: 100vh; }
+        .container { width: 100%; max-width: 700px; display: flex; flex-direction: column; background: var(--panel); border: 1px solid #30363d; border-radius: 6px; margin-top: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .header { padding: 16px; border-bottom: 1px solid #30363d; font-weight: 600; font-size: 1.2em; display: flex; align-items: center; gap: 10px; }
+        .chat-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; min-height: 400px; }
+        .message { padding: 12px 16px; border-radius: 6px; max-width: 85%; line-height: 1.5; word-wrap: break-word; font-size: 0.95em; }
+        .user { align-self: flex-end; background: #1f6feb; color: white; border-bottom-right-radius: 2px; }
+        .ai { align-self: flex-start; background: #21262d; border: 1px solid #30363d; border-bottom-left-radius: 2px; }
+        .code-box { background: #0d1117; border: 1px solid #30363d; padding: 10px; border-radius: 4px; font-family: monospace; font-size: 0.85em; color: #58a6ff; margin-top: 8px; cursor: pointer; position: relative; }
+        .code-box:hover { border-color: #58a6ff; }
+        .copy-hint { font-size: 0.7em; color: #8b949e; text-align: right; margin-top: 4px; }
+        .input-area { padding: 16px; border-top: 1px solid #30363d; display: flex; gap: 10px; background: #161b22; border-radius: 0 0 6px 6px; }
+        input { flex: 1; padding: 10px; border-radius: 6px; border: 1px solid #30363d; background: #0d1117; color: white; outline: none; }
+        input:focus { border-color: #58a6ff; }
+        button { padding: 10px 20px; background: var(--accent); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        button:hover { background: #2ea043; }
+        button:disabled { background: #30363d; cursor: not-allowed; }
+        .loading { color: #8b949e; font-style: italic; font-size: 0.9em; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">🤖 Qwen Roblox Script Generator</div>
+        <div class="chat-area" id="chat">
+            <div class="message ai">Hallo! Beschreibe dein Roblox Script (z.B. "Ein Anti-Cheat System" oder "Ein Admin Panel"). Ich generiere den Code und lade ihn auf GitHub.</div>
+        </div>
+        <div class="input-area">
+            <input type="text" id="userInput" placeholder="Was soll das Script machen?" onkeypress="if(event.key==='Enter') sendMessage()">
+            <button id="sendBtn" onclick="sendMessage()">Generieren</button>
+        </div>
+    </div>
 
-    messages.value.push({ role: 'user', content: text });
-    input.value = '';
-    isTyping.value = true;
-    await scrollToBottom();
+    <script>
+        async function sendMessage() {
+            const input = document.getElementById('userInput');
+            const btn = document.getElementById('sendBtn');
+            const chat = document.getElementById('chat');
+            const text = input.value.trim();
+            
+            if (!text) return;
 
-    try {
-        const response = await fetch("https://DEINE-URL.vercel.app/api/generate", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ prompt: text })
-        });
-        const data = await response.json();
+            // User Nachricht anzeigen
+            chat.innerHTML += `<div class="message user">${text}</div>`;
+            input.value = '';
+            chat.scrollTop = chat.scrollHeight;
+            
+            // Loading Status
+            const loadingId = 'loading-' + Date.now();
+            chat.innerHTML += `<div id="${loadingId}" class="message ai loading">Qwen denkt nach und bereitet GitHub Commit vor...</div>`;
+            chat.scrollTop = chat.scrollHeight;
+            
+            btn.disabled = true;
 
-        if (data.success) {
-            messages.value.push({ 
-                role: 'ai', 
-                content: `Script generiert! ✅\n\nCode für Roblox: **${data.connectCode}**` 
-            });
+            try {
+                const response = await fetch('api.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ prompt: text })
+                });
+
+                const data = await response.json();
+
+                // Loading entfernen
+                document.getElementById(loadingId).remove();
+
+                if (data.success) {
+                    chat.innerHTML += `
+                        <div class="message ai">
+                            Fertig! Dein Code wurde auf GitHub gepusht.<br>
+                            Kopiere diesen Installations-Code für das Roblox Plugin:
+                            <div class="code-box" onclick="navigator.clipboard.writeText('${data.code}'); alert('Kopiert!');" title="Klicken zum Kopieren">
+                                ${data.code}
+                            </div>
+                            <div class="copy-hint">Klicken zum Kopieren</div>
+                            <div style="margin-top:10px; font-size:0.8em; color:#8b949e;">
+                                <a href="${data.url}" target="_blank" style="color:#58a6ff;">Auf GitHub ansehen</a>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    chat.innerHTML += `<div class="message ai" style="color:#ff7b72">Fehler: ${data.error}</div>`;
+                }
+            } catch (err) {
+                document.getElementById(loadingId).remove();
+                chat.innerHTML += `<div class="message ai" style="color:#ff7b72">Verbindungsfehler zum Server.</div>`;
+            } finally {
+                btn.disabled = false;
+                chat.scrollTop = chat.scrollHeight;
+            }
         }
-    } catch (e) {
-        messages.value.push({ role: 'ai', content: "Fehler: Server antwortet nicht." });
-    } finally {
-        isTyping.value = false;
-        await scrollToBottom();
-    }
-};
+    </script>
+</body>
+</html>
