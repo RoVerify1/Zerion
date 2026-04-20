@@ -242,3 +242,29 @@ input:focus, select:focus {
     .hero h1 { font-size: 2.5rem; }
     .hero h1 span { font-size: 3rem; }
 }
+.error-msg {
+    color: var(--accent);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+.success-msg {
+    color: var(--success);
+    font-size: 0.9rem;
+    margin-top: 0.5rem;
+    display: none;
+}
+
+.dev-code-display {
+    background: rgba(0, 242, 255, 0.1);
+    border: 1px solid var(--primary);
+    padding: 1rem;
+    border-radius: 10px;
+    font-family: monospace;
+    font-size: 1.2rem;
+    text-align: center;
+    margin: 1rem 0;
+    color: var(--primary);
+    letter-spacing: 2px;
+}
