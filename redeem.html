@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZERION | Code Einlösen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-text">ZERION // REDEEM</div>
+            </div>
+            <nav>
+                <a href="index.html">Shop</a>
+                <a href="redeem.html" class="active">Code einlösen</a>
+                <a href="dash.html">Admin</a>
+            </nav>
+        </header>
+
+        <div style="max-width: 600px; margin: 4rem auto;">
+            <div class="admin-section" style="text-align: center;">
+                <h1 style="font-size: 2.5rem; margin-bottom: 1rem;">🎟️ CODE EINLÖSEN</h1>
+                <p style="color: #aaa; margin-bottom: 2rem;">Gib deinen Redeem-Code ein, um dein Produkt herunterzuladen</p>
+                
+                <input type="text" id="redeemCode" placeholder="XXXX-XXXX-XXXX" style="text-align: center; font-size: 1.5rem; letter-spacing: 3px; text-transform: uppercase; margin-bottom: 1.5rem;">
+                
+                <button class="create-btn" onclick="redeemCode()">✅ Code einlösen</button>
+            </div>
+
+            <div id="downloadArea" style="display: none; margin-top: 2rem;">
+                <div class="admin-section" style="text-align: center; border-color: var(--success);">
+                    <h2 style="color: var(--success); margin-bottom: 1rem;">✅ Code erfolgreich eingelöst!</h2>
+                    <div id="productInfo"></div>
+                    <a id="downloadBtn" href="#" download class="btn-glitch" style="margin-top: 1.5rem; display: inline-block;">⬇️ JETZT HERUNTERLADEN</a>
+                </div>
+            </div>
+
+            <div id="errorMsg" style="display: none; margin-top: 2rem;">
+                <div class="admin-section" style="text-align: center; border-color: var(--accent);">
+                    <h2 style="color: var(--accent); margin-bottom: 1rem;">❌ Ungültiger Code</h2>
+                    <p>Dieser Code existiert nicht oder wurde bereits verwendet.</p>
+                    <p style="margin-top: 1rem; color: #aaa;">Bei Fragen öffne ein Ticket auf <a href="https://discord.gg/YOURSERVER" style="color: var(--primary);">Discord</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function redeemCode() {
+            const code = document.getElementById('redeemCode').value.trim().toUpperCase();
+            
+            if(!code) {
+                alert('Bitte einen Code eingeben!');
+                return;
+            }
+
+            const codes = JSON.parse(localStorage.getItem('zerion_codes')) || [];
+            const validCode = codes.find(c => c.code === code && !c.used);
+            
+            document.getElementById('downloadArea').style.display = 'none';
+            document.getElementById('errorMsg').style.display = 'none';
+
+            if(validCode) {
+                // Mark as used
+                validCode.used = true;
+                validCode.usedBy = 'User_' + Math.floor(Math.random() * 10000);
+                validCode.usedAt = new Date().toISOString();
+                localStorage.setItem('zerion_codes', JSON.stringify(codes));
+
+                // Get product info
+                const products = JSON.parse(localStorage.getItem('zerion_products')) || [];
+                const product = products.find(p => p.id === validCode.productId);
+
+                // Show download area
+                document.getElementById('productInfo').innerHTML = `
+                    <div style="font-size: 4rem; margin-bottom: 1rem;">${product.emoji || '📦'}</div>
+                    <h3>${product.name}</h3>
+                    <p style="color: #aaa; margin: 1rem 0;">${product.description || 'Digital Download'}</p>
+                    <p style="color: var(--success); font-weight: bold;">Datei: ${product.fileName || 'download.zip'}</p>
+                `;
+                
+                // Create fake download link (in real app, this would be a secure URL)
+                document.getElementById('downloadBtn').href = `data:text/plain;charset=utf-8,This is a demo download for ${product.name}`;
+                document.getElementById('downloadBtn').download = product.fileName || 'download.zip';
+                
+                document.getElementById('downloadArea').style.display = 'block';
+            } else {
+                document.getElementById('errorMsg').style.display = 'block';
+            }
+        }
+
+        // Allow Enter key
+        document.getElementById('redeemCode').addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') redeemCode();
+        });
+    </script>
+</body>
+</html>
