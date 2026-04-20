@@ -2,90 +2,332 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>Qwen Roblox Generator</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXUS VOID | KiBlox</title>
     <style>
-        body { background: #0d1117; color: #c9d1d9; font-family: sans-serif; display: flex; justify-content: center; height: 100vh; margin: 0; }
-        .container { width: 100%; max-width: 600px; background: #161b22; border: 1px solid #30363d; margin-top: 50px; border-radius: 8px; display: flex; flex-direction: column; }
-        .chat { flex: 1; padding: 20px; overflow-y: auto; min-height: 300px; }
-        .msg { padding: 10px; border-radius: 6px; margin-bottom: 10px; max-width: 80%; }
-        .user { background: #1f6feb; color: white; align-self: flex-end; margin-left: auto; }
-        .ai { background: #21262d; border: 1px solid #30363d; }
-        .error { background: #4c1a1a; border: 1px solid #da3633; color: #ff7b72; width: 90%; margin: 0 auto; text-align: center; }
-        .code-box { background: #000; padding: 10px; border: 1px solid #30363d; color: #58a6ff; font-family: monospace; cursor: pointer; margin-top: 5px; }
-        input { flex: 1; padding: 10px; background: #0d1117; border: 1px solid #30363d; color: white; border-radius: 4px; }
-        button { padding: 10px 20px; background: #238636; color: white; border: none; border-radius: 4px; cursor: pointer; margin-left: 10px; }
-        .input-area { padding: 15px; border-top: 1px solid #30363d; display: flex; }
+        :root {
+            --primary: #00f2ff;
+            --secondary: #bd00ff;
+            --bg-dark: #050505;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: white;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Background Waves */
+        .background-waves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1a0b2e 0%, #000000 100%);
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(189, 0, 255, 0.1), transparent);
+            border-radius: 40%;
+            animation: rotate 15s infinite linear;
+        }
+
+        .wave:nth-child(2) {
+            bottom: -60%;
+            left: -60%;
+            background: linear-gradient(45deg, transparent, rgba(0, 242, 255, 0.1), transparent);
+            animation: rotate 20s infinite reverse linear;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Floating Particles */
+        .particle {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            opacity: 0.5;
+            animation: float 10s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) translateX(0); }
+            50% { transform: translateY(-100px) translateX(50px); }
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Glassmorphism Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 2rem;
+            background: var(--glass);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            margin-bottom: 4rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 2rem;
+            font-weight: 500;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--primary);
+            transition: 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        h1 span {
+            display: block;
+            font-size: 5rem;
+            background: linear-gradient(to right, #fff, #aaa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(255,255,255,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: #aaa;
+            margin-bottom: 3rem;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Interactive Cards */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        .card {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            padding: 2rem;
+            border-radius: 20px;
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: var(--primary);
+            box-shadow: 0 0 30px rgba(0, 242, 255, 0.2);
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+        }
+
+        .card p {
+            color: #ccc;
+            line-height: 1.6;
+        }
+
+        /* Glitch Button */
+        .btn-glitch {
+            display: inline-block;
+            padding: 1rem 3rem;
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            position: relative;
+            transition: 0.3s;
+            overflow: hidden;
+            margin-top: 2rem;
+        }
+
+        .btn-glitch:hover {
+            background: var(--primary);
+            color: black;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            h1 { font-size: 2.5rem; }
+            h1 span { font-size: 3rem; }
+            header { flex-direction: column; gap: 1rem; }
+            nav a { margin: 0 1rem; }
+        }
     </style>
 </head>
 <body>
-<div class="container">
-    <div style="padding:15px; border-bottom:1px solid #30363d; font-weight:bold;">🤖 Qwen AI Generator</div>
-    <div class="chat" id="chat">
-        <div class="msg ai">Hallo! Gib einen Befehl ein (z.B. 'Erstelle ein Anti-Cheat').</div>
+
+    <!-- Background Animation -->
+    <div class="background-waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+        <!-- JS will add particles here -->
     </div>
-    <div class="input-area">
-        <input type="text" id="inp" placeholder="Beschreibe dein Script..." onkeypress="if(event.key==='Enter') send()">
-        <button onclick="send()" id="btn">Senden</button>
+
+    <div class="container">
+        <header>
+            <div class="logo">KiBlox // NEXUS</div>
+            <nav>
+                <a href="#">Projects</a>
+                <a href="#">Services</a>
+                <a href="#">Contact</a>
+            </nav>
+        </header>
+
+        <section class="hero">
+            <h1>
+                WELCOME TO THE
+                <span>VOID</span>
+            </h1>
+            <p class="subtitle">
+                Erlebe die nächste Generation des Webdesigns. 
+                Glas-Effekte, Neon-Ästhetik und flüssige Animationen für dein digitales Imperium.
+            </p>
+            <button class="btn-glitch" onclick="alert('System Initialized...')">Enter System</button>
+        </section>
+
+        <div class="cards-grid">
+            <div class="card">
+                <h3>🚀 Roblox Integration</h3>
+                <p>Nahtlose Verbindung zwischen Web und Spiel. API-Strukturen, die sicher und schnell sind.</p>
+            </div>
+            <div class="card">
+                <h3>💎 Glassmorphism UI</h3>
+                <p>Moderne Oberflächen mit Blur-Effekten, die Tiefe und Eleganz in jedes Projekt bringen.</p>
+            </div>
+            <div class="card">
+                <h3>⚡ High Performance</h3>
+                <p>Optimiert für Geschwindigkeit. Kein Ballast, nur pure Leistung und sauberen Code.</p>
+            </div>
+        </div>
     </div>
-</div>
 
-<script>
-async function send() {
-    const inp = document.getElementById('inp');
-    const btn = document.getElementById('btn');
-    const chat = document.getElementById('chat');
-    const txt = inp.value.trim();
-    if(!txt) return;
+    <script>
+        // Create floating particles
+        const bg = document.querySelector('.background-waves');
+        
+        for(let i = 0; i < 20; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            
+            // Random positioning and sizing
+            const size = Math.random() * 5 + 2;
+            particle.style.width = `${size}px`;
+            particle.style.height = `${size}px`;
+            particle.style.left = `${Math.random() * 100}%`;
+            particle.style.top = `${Math.random() * 100}%`;
+            particle.style.animationDuration = `${Math.random() * 10 + 5}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            
+            bg.appendChild(particle);
+        }
 
-    chat.innerHTML += `<div class="msg user">${txt}</div>`;
-    inp.value = '';
-    chat.scrollTop = chat.scrollHeight;
-    
-    const loadId = 'l'+Date.now();
-    chat.innerHTML += `<div id="${loadId}" class="msg ai">⏳ Generiere...</div>`;
-    btn.disabled = true;
-
-    try {
-        const res = await fetch('api.php', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({prompt: txt})
+        // Mouse move effect for cards
+        document.querySelectorAll('.card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const rect = card.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                
+                card.style.background = `radial-gradient(circle at ${x}px ${y}px, rgba(255,255,255,0.1), rgba(255,255,255,0.05))`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.background = 'var(--glass)';
+            });
         });
-
-        // WICHTIG: Erst Text holen, dann versuchen zu parsen
-        const raw = await res.text();
-        let data;
-        try {
-            data = JSON.parse(raw);
-        } catch(e) {
-            throw new Error("Server antwortete kein JSON: " + raw.substring(0, 150));
-        }
-
-        document.getElementById(loadId).remove();
-
-        if(data.success) {
-            chat.innerHTML += `
-                <div class="msg ai">
-                    ✅ Erfolg!<br>
-                    Code zum Kopieren:
-                    <div class="code-box" onclick="navigator.clipboard.writeText('${data.code}');alert('Kopiert!')">${data.code}</div>
-                    <small><a href="${data.url}" target="_blank" style="color:#58a6ff">Auf GitHub ansehen</a></small>
-                </div>`;
-        } else {
-            // Hier wird der echte Fehlertext ausgegeben
-            const errText = typeof data.error === 'object' ? JSON.stringify(data.error) : data.error;
-            chat.innerHTML += `<div class="msg error">❌ Fehler: ${errText}</div>`;
-            console.error("Detailfehler:", data);
-        }
-    } catch(e) {
-        if(document.getElementById(loadId)) document.getElementById(loadId).remove();
-        chat.innerHTML += `<div class="msg error">❌ Netzwerkfehler: ${e.message}</div>`;
-        console.error(e);
-    } finally {
-        btn.disabled = false;
-        chat.scrollTop = chat.scrollHeight;
-    }
-}
-</script>
+    </script>
 </body>
 </html>
