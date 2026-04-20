@@ -6,6 +6,44 @@
     <title>ZERION | Admin Dashboard</title>
     <link rel="stylesheet" href="style.css">
     <style>
+        .login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .login-box {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        .error-msg {
+            color: var(--accent);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
+        .success-msg {
+            color: var(--success);
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+            display: none;
+        }
+        
         .admin-section {
             background: var(--glass);
             backdrop-filter: blur(16px);
@@ -30,91 +68,208 @@
             margin-bottom: 0.5rem;
         }
         
-        .code-valid {
-            color: var(--success);
-        }
-        
-        .code-used {
-            color: var(--accent);
-            text-decoration: line-through;
+        .dev-code-display {
+            background: rgba(0, 242, 255, 0.1);
+            border: 1px solid var(--primary);
+            padding: 1rem;
+            border-radius: 10px;
+            font-family: monospace;
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 1rem 0;
+            color: var(--primary);
+            letter-spacing: 2px;
         }
     </style>
 </head>
 <body>
-    <div class="background-waves">
-        <div class="wave"></div>
-        <div class="wave"></div>
+    <!-- Login Screen -->
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h2 style="margin-bottom: 2rem;">🔐 ADMIN LOGIN</h2>
+            <input type="password" id="adminPassword" placeholder="Passwort eingeben..." style="margin-bottom: 1rem;">
+            <button class="create-btn" onclick="checkPassword()">Einloggen</button>
+            <div id="loginError" class="error-msg">Falsches Passwort!</div>
+        </div>
     </div>
 
-    <div class="container">
-        <header>
-            <div class="logo-container">
-                <div class="logo-text">ZERION // DASH</div>
-            </div>
-            <nav>
-                <a href="index.html">Shop</a>
-                <a href="redeem.html">Redeem</a>
-                <a href="dash.html" class="active">Admin</a>
-            </nav>
-        </header>
-
-        <h1 style="text-align: center; margin-bottom: 3rem;">🔐 ADMIN DASHBOARD</h1>
-
-        <!-- Produkt erstellen -->
-        <div class="admin-section">
-            <h2>➕ Neues Produkt erstellen</h2>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
-                <input type="text" id="prodName" placeholder="Produktname">
-                <input type="number" id="prodPrice" placeholder="Preis (€)" step="0.01">
-                <input type="text" id="prodEmoji" placeholder="Emoji (z.B. 🎮)">
-                <input type="text" id="prodColor" placeholder="Farbe (#00f2ff)">
-                <input type="text" id="prodDesc" placeholder="Beschreibung">
-                <input type="file" id="prodFile" accept=".zip,.rar,.exe,.pdf">
-            </div>
-            <button class="create-btn" onclick="createProduct()" style="margin-top: 1rem;">✅ Produkt speichern</button>
+    <!-- Main Content (hidden until login) -->
+    <div id="mainContent" style="display: none;">
+        <div class="background-waves">
+            <div class="wave"></div>
+            <div class="wave"></div>
         </div>
 
-        <!-- Code generieren -->
-        <div class="admin-section">
-            <h2>🎟️ Redeem-Code generieren</h2>
-            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
-                <select id="codeProduct" style="flex: 1; min-width: 200px;"></select>
-                <input type="number" id="codeCount" value="1" min="1" max="100" style="width: 100px;">
-                <button class="create-btn" onclick="generateCodes()">🎲 Codes generieren</button>
+        <div class="container">
+            <header>
+                <div class="logo-container">
+                    <div class="logo-text">ZERION // DASH</div>
+                </div>
+                <nav>
+                    <a href="index.html">Shop</a>
+                    <a href="redeem.html">Redeem</a>
+                    <a href="dash.html" class="active">Admin</a>
+                    <a href="#" onclick="logout()" style="color: var(--accent);">Logout</a>
+                </nav>
+            </header>
+
+            <h1 style="text-align: center; margin-bottom: 3rem;">🔐 ADMIN DASHBOARD</h1>
+
+            <!-- Logo Upload -->
+            <div class="admin-section">
+                <h2>🖼️ Logo hochladen</h2>
+                <p style="color: #aaa; margin-bottom: 1rem;">Lade dein Logo als PNG/JPG hoch (wird auf allen Seiten angezeigt)</p>
+                <input type="file" id="logoUpload" accept="image/png,image/jpeg,image/jpg" style="margin-bottom: 1rem;">
+                <button class="create-btn" onclick="uploadLogo()">✅ Logo speichern</button>
+                <div id="logoSuccess" class="success-msg">Logo erfolgreich gespeichert!</div>
             </div>
-        </div>
 
-        <!-- Codes anzeigen -->
-        <div class="admin-section">
-            <h2>📋 Alle Codes</h2>
-            <div class="code-list" id="codeList"></div>
-        </div>
+            <!-- Passwort ändern -->
+            <div class="admin-section">
+                <h2>🔑 Admin-Passwort ändern</h2>
+                <input type="password" id="newPassword" placeholder="Neues Passwort..." style="margin-bottom: 1rem;">
+                <button class="create-btn" onclick="changePassword()">Passwort ändern</button>
+                <div id="passwordSuccess" class="success-msg">Passwort geändert!</div>
+            </div>
 
-        <!-- Produkte verwalten -->
-        <div class="admin-section">
-            <h2>📦 Produkte verwalten</h2>
-            <div id="productList"></div>
+            <!-- Produkt erstellen -->
+            <div class="admin-section">
+                <h2>➕ Neues Produkt erstellen</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                    <input type="text" id="prodName" placeholder="Produktname *">
+                    <input type="number" id="prodPrice" placeholder="Preis (€) *" step="0.01">
+                    <input type="text" id="prodEmoji" placeholder="Emoji (z.B. 🎮)">
+                    <input type="text" id="prodColor" placeholder="Farbe (#00f2ff)" value="#00f2ff">
+                    <input type="text" id="prodDesc" placeholder="Beschreibung">
+                    <input type="file" id="prodFile" accept=".zip,.rar,.exe,.pdf,.lua">
+                </div>
+                
+                <!-- Inline Fehlermeldung statt Popup -->
+                <div id="productError" class="error-msg" style="margin-top: 1rem; text-align: center;"></div>
+                <div id="productSuccess" class="success-msg" style="margin-top: 1rem; text-align: center;"></div>
+                
+                <button class="create-btn" onclick="createProduct()" style="margin-top: 1rem;">✅ Produkt speichern</button>
+                
+                <!-- Dev Code Anzeige -->
+                <div id="devCodeDisplay" class="dev-code-display" style="display: none;"></div>
+            </div>
+
+            <!-- Produkte verwalten -->
+            <div class="admin-section">
+                <h2>📦 Produkte verwalten</h2>
+                <div id="productList"></div>
+            </div>
         </div>
     </div>
 
     <script>
+        // Standard-Passwort (sollte beim ersten Login geändert werden)
+        const DEFAULT_PASSWORD = 'admin123';
+        
         window.onload = function() {
-            loadProducts();
-            loadCodes();
+            // Check if already logged in
+            if(sessionStorage.getItem('adminLoggedIn') === 'true') {
+                showMainContent();
+            }
+            
+            // Initialize password if not set
+            if(!localStorage.getItem('zerion_admin_password')) {
+                localStorage.setItem('zerion_admin_password', DEFAULT_PASSWORD);
+            }
         };
 
+        function checkPassword() {
+            const input = document.getElementById('adminPassword').value;
+            const stored = localStorage.getItem('zerion_admin_password');
+            
+            if(input === stored) {
+                sessionStorage.setItem('adminLoggedIn', 'true');
+                showMainContent();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('loginError').style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        function showMainContent() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            loadProducts();
+        }
+
+        function logout() {
+            sessionStorage.removeItem('adminLoggedIn');
+            location.reload();
+        }
+
+        function changePassword() {
+            const newPass = document.getElementById('newPassword').value;
+            if(newPass.length < 6) {
+                alert('Passwort muss mindestens 6 Zeichen haben!');
+                return;
+            }
+            localStorage.setItem('zerion_admin_password', newPass);
+            document.getElementById('passwordSuccess').style.display = 'block';
+            document.getElementById('newPassword').value = '';
+            setTimeout(() => {
+                document.getElementById('passwordSuccess').style.display = 'none';
+            }, 3000);
+        }
+
+        function uploadLogo() {
+            const fileInput = document.getElementById('logoUpload');
+            const file = fileInput.files[0];
+            
+            if(!file) {
+                alert('Bitte eine Datei auswählen!');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                localStorage.setItem('zerion_logo', e.target.result);
+                document.getElementById('logoSuccess').style.display = 'block';
+                setTimeout(() => {
+                    document.getElementById('logoSuccess').style.display = 'none';
+                }, 3000);
+            };
+            reader.readAsDataURL(file);
+        }
+
         function createProduct() {
-            const name = document.getElementById('prodName').value;
+            const name = document.getElementById('prodName').value.trim();
             const price = parseFloat(document.getElementById('prodPrice').value);
             const emoji = document.getElementById('prodEmoji').value || '📦';
             const color = document.getElementById('prodColor').value || '#00f2ff';
             const description = document.getElementById('prodDesc').value;
             const fileInput = document.getElementById('prodFile');
             
-            if(!name || !price) {
-                alert('Bitte Name und Preis ausfüllen!');
+            const errorDiv = document.getElementById('productError');
+            const successDiv = document.getElementById('productSuccess');
+            const devCodeDiv = document.getElementById('devCodeDisplay');
+            
+            // Reset messages
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            devCodeDiv.style.display = 'none';
+
+            // Validation - NO POPUP!
+            if(!name) {
+                errorDiv.textContent = '❌ Bitte Produktnamen eingeben!';
+                errorDiv.style.display = 'block';
                 return;
             }
+            
+            if(!price || price <= 0) {
+                errorDiv.textContent = '❌ Bitte gültigen Preis eingeben!';
+                errorDiv.style.display = 'block';
+                return;
+            }
+
+            // Generate unique Dev Code
+            const devCode = generateDevCode();
 
             let products = JSON.parse(localStorage.getItem('zerion_products')) || [];
             
@@ -125,6 +280,7 @@
                 emoji,
                 color,
                 description,
+                devCode,
                 fileName: fileInput.files[0] ? fileInput.files[0].name : 'download.zip',
                 createdAt: new Date().toISOString()
             };
@@ -132,32 +288,55 @@
             products.push(newProduct);
             localStorage.setItem('zerion_products', JSON.stringify(products));
             
-            alert(`✅ Produkt "${name}" erstellt!`);
+            // Show success with Dev Code
+            successDiv.textContent = `✅ Produkt "${name}" erstellt!`;
+            successDiv.style.display = 'block';
+            
+            devCodeDiv.innerHTML = `
+                <div style="font-size: 0.9rem; color: #aaa; margin-bottom: 0.5rem;">Developer-Code (für Roblox-Integration):</div>
+                <div style="font-size: 1.5rem; font-weight: bold;">${devCode}</div>
+                <button onclick="copyToClipboard('${devCode}')" style="margin-top: 0.5rem; background: var(--primary); border: none; color: black; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer;">📋 Code kopieren</button>
+            `;
+            devCodeDiv.style.display = 'block';
+            
             loadProducts();
             
             // Reset form
             document.getElementById('prodName').value = '';
             document.getElementById('prodPrice').value = '';
             document.getElementById('prodEmoji').value = '';
-            document.getElementById('prodColor').value = '';
+            document.getElementById('prodColor').value = '#00f2ff';
             document.getElementById('prodDesc').value = '';
             document.getElementById('prodFile').value = '';
         }
 
+        function generateDevCode() {
+            const prefix = 'ZER';
+            const part1 = Math.random().toString(36).substring(2, 6).toUpperCase();
+            const part2 = Math.random().toString(36).substring(2, 6).toUpperCase();
+            return `${prefix}-${part1}-${part2}`;
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+            alert('Code kopiert: ' + text);
+        }
+
         function loadProducts() {
             const products = JSON.parse(localStorage.getItem('zerion_products')) || [];
-            
-            // Update product select for codes
-            const select = document.getElementById('codeProduct');
-            select.innerHTML = products.map(p => `<option value="${p.id}">${p.name} - ${p.price.toFixed(2)}€</option>`).join('');
-            
-            // Update product list
             const list = document.getElementById('productList');
+            
+            if(products.length === 0) {
+                list.innerHTML = '<p style="color: #aaa; text-align: center;">Noch keine Produkte erstellt</p>';
+                return;
+            }
+            
             list.innerHTML = products.map(p => `
                 <div class="code-item">
                     <div>
                         <strong>${p.emoji} ${p.name}</strong>
-                        <div style="color: #aaa; font-size: 0.9rem;">${p.description || 'Keine Beschreibung'}</div>
+                        <div style="color: #aaa; font-size: 0.9rem; margin-top: 0.3rem;">${p.description || 'Keine Beschreibung'}</div>
+                        <div style="font-family: monospace; color: var(--primary); font-size: 0.8rem; margin-top: 0.3rem;">Code: ${p.devCode}</div>
                     </div>
                     <div style="text-align: right;">
                         <div style="color: var(--success); font-weight: bold;">${p.price.toFixed(2)} €</div>
@@ -174,83 +353,13 @@
             products = products.filter(p => p.id !== id);
             localStorage.setItem('zerion_products', JSON.stringify(products));
             
-            // Also delete associated codes
-            let codes = JSON.parse(localStorage.getItem('zerion_codes')) || [];
-            codes = codes.filter(c => c.productId !== id);
-            localStorage.setItem('zerion_codes', JSON.stringify(codes));
-            
             loadProducts();
-            loadCodes();
         }
 
-        function generateCodes() {
-            const productId = document.getElementById('codeProduct').value;
-            const count = parseInt(document.getElementById('codeCount').value);
-            
-            if(!productId) {
-                alert('Bitte ein Produkt auswählen!');
-                return;
-            }
-
-            const products = JSON.parse(localStorage.getItem('zerion_products')) || [];
-            const product = products.find(p => p.id === productId);
-            
-            let codes = JSON.parse(localStorage.getItem('zerion_codes')) || [];
-            
-            for(let i = 0; i < count; i++) {
-                const code = generateRandomCode();
-                codes.push({
-                    code,
-                    productId,
-                    productName: product.name,
-                    used: false,
-                    usedBy: null,
-                    createdAt: new Date().toISOString()
-                });
-            }
-            
-            localStorage.setItem('zerion_codes', JSON.stringify(codes));
-            alert(`✅ ${count} Code(s) für "${product.name}" generiert!`);
-            loadCodes();
-        }
-
-        function generateRandomCode() {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-            let code = '';
-            for(let i = 0; i < 12; i++) {
-                code += chars.charAt(Math.floor(Math.random() * chars.length));
-                if((i + 1) % 4 === 0 && i < 11) code += '-';
-            }
-            return code;
-        }
-
-        function loadCodes() {
-            const codes = JSON.parse(localStorage.getItem('zerion_codes')) || [];
-            const list = document.getElementById('codeList');
-            
-            if(codes.length === 0) {
-                list.innerHTML = '<p style="color: #aaa;">Noch keine Codes generiert</p>';
-                return;
-            }
-            
-            list.innerHTML = codes.map(c => `
-                <div class="code-item">
-                    <div>
-                        <code style="font-size: 1.1rem; font-weight: bold; color: ${c.used ? 'var(--accent)' : 'var(--success)'};">${c.code}</code>
-                        <div style="color: #aaa; font-size: 0.9rem; margin-top: 0.3rem;">
-                            Produkt: ${c.productName} | 
-                            Status: ${c.used ? '❌ Eingelöst von ' + c.usedBy : '✅ Verfügbar'}
-                        </div>
-                    </div>
-                    <button onclick="copyCode('${c.code}')" style="background: var(--primary); border: none; color: black; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: bold;">📋 Kopieren</button>
-                </div>
-            `).join('');
-        }
-
-        function copyCode(code) {
-            navigator.clipboard.writeText(code);
-            alert(`Code kopiert: ${code}`);
-        }
+        // Allow Enter key for login
+        document.getElementById('adminPassword')?.addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') checkPassword();
+        });
     </script>
 </body>
 </html>
