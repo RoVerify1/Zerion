@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZERION | Admin Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .admin-section {
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .code-list {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .code-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(0,0,0,0.2);
+            border-radius: 10px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .code-valid {
+            color: var(--success);
+        }
+        
+        .code-used {
+            color: var(--accent);
+            text-decoration: line-through;
+        }
+    </style>
+</head>
+<body>
+    <div class="background-waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo-text">ZERION // DASH</div>
+            </div>
+            <nav>
+                <a href="index.html">Shop</a>
+                <a href="redeem.html">Redeem</a>
+                <a href="dash.html" class="active">Admin</a>
+            </nav>
+        </header>
+
+        <h1 style="text-align: center; margin-bottom: 3rem;">🔐 ADMIN DASHBOARD</h1>
+
+        <!-- Produkt erstellen -->
+        <div class="admin-section">
+            <h2>➕ Neues Produkt erstellen</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin-top: 1.5rem;">
+                <input type="text" id="prodName" placeholder="Produktname">
+                <input type="number" id="prodPrice" placeholder="Preis (€)" step="0.01">
+                <input type="text" id="prodEmoji" placeholder="Emoji (z.B. 🎮)">
+                <input type="text" id="prodColor" placeholder="Farbe (#00f2ff)">
+                <input type="text" id="prodDesc" placeholder="Beschreibung">
+                <input type="file" id="prodFile" accept=".zip,.rar,.exe,.pdf">
+            </div>
+            <button class="create-btn" onclick="createProduct()" style="margin-top: 1rem;">✅ Produkt speichern</button>
+        </div>
+
+        <!-- Code generieren -->
+        <div class="admin-section">
+            <h2>🎟️ Redeem-Code generieren</h2>
+            <div style="display: flex; gap: 1rem; margin-top: 1.5rem; flex-wrap: wrap;">
+                <select id="codeProduct" style="flex: 1; min-width: 200px;"></select>
+                <input type="number" id="codeCount" value="1" min="1" max="100" style="width: 100px;">
+                <button class="create-btn" onclick="generateCodes()">🎲 Codes generieren</button>
+            </div>
+        </div>
+
+        <!-- Codes anzeigen -->
+        <div class="admin-section">
+            <h2>📋 Alle Codes</h2>
+            <div class="code-list" id="codeList"></div>
+        </div>
+
+        <!-- Produkte verwalten -->
+        <div class="admin-section">
+            <h2>📦 Produkte verwalten</h2>
+            <div id="productList"></div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            loadProducts();
+            loadCodes();
+        };
+
+        function createProduct() {
+            const name = document.getElementById('prodName').value;
+            const price = parseFloat(document.getElementById('prodPrice').value);
+            const emoji = document.getElementById('prodEmoji').value || '📦';
+            const color = document.getElementById('prodColor').value || '#00f2ff';
+            const description = document.getElementById('prodDesc').value;
+            const fileInput = document.getElementById('prodFile');
+            
+            if(!name || !price) {
+                alert('Bitte Name und Preis ausfüllen!');
+                return;
+            }
+
+            let products = JSON.parse(localStorage.getItem('zerion_products')) || [];
+            
+            const newProduct = {
+                id: Date.now().toString(),
+                name,
+                price,
+                emoji,
+                color,
+                description,
+                fileName: fileInput.files[0] ? fileInput.files[0].name : 'download.zip',
+                createdAt: new Date().toISOString()
+            };
+
+            products.push(newProduct);
+            localStorage.setItem('zerion_products', JSON.stringify(products));
+            
+            alert(`✅ Produkt "${name}" erstellt!`);
+            loadProducts();
+            
+            // Reset form
+            document.getElementById('prodName').value = '';
+            document.getElementById('prodPrice').value = '';
+            document.getElementById('prodEmoji').value = '';
+            document.getElementById('prodColor').value = '';
+            document.getElementById('prodDesc').value = '';
+            document.getElementById('prodFile').value = '';
+        }
+
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('zerion_products')) || [];
+            
+            // Update product select for codes
+            const select = document.getElementById('codeProduct');
+            select.innerHTML = products.map(p => `<option value="${p.id}">${p.name} - ${p.price.toFixed(2)}€</option>`).join('');
+            
+            // Update product list
+            const list = document.getElementById('productList');
+            list.innerHTML = products.map(p => `
+                <div class="code-item">
+                    <div>
+                        <strong>${p.emoji} ${p.name}</strong>
+                        <div style="color: #aaa; font-size: 0.9rem;">${p.description || 'Keine Beschreibung'}</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div style="color: var(--success); font-weight: bold;">${p.price.toFixed(2)} €</div>
+                        <button onclick="deleteProduct('${p.id}')" style="background: var(--accent); border: none; color: white; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; margin-top: 0.5rem;">Löschen</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteProduct(id) {
+            if(!confirm('Produkt wirklich löschen?')) return;
+            
+            let products = JSON.parse(localStorage.getItem('zerion_products')) || [];
+            products = products.filter(p => p.id !== id);
+            localStorage.setItem('zerion_products', JSON.stringify(products));
+            
+            // Also delete associated codes
+            let codes = JSON.parse(localStorage.getItem('zerion_codes')) || [];
+            codes = codes.filter(c => c.productId !== id);
+            localStorage.setItem('zerion_codes', JSON.stringify(codes));
+            
+            loadProducts();
+            loadCodes();
+        }
+
+        function generateCodes() {
+            const productId = document.getElementById('codeProduct').value;
+            const count = parseInt(document.getElementById('codeCount').value);
+            
+            if(!productId) {
+                alert('Bitte ein Produkt auswählen!');
+                return;
+            }
+
+            const products = JSON.parse(localStorage.getItem('zerion_products')) || [];
+            const product = products.find(p => p.id === productId);
+            
+            let codes = JSON.parse(localStorage.getItem('zerion_codes')) || [];
+            
+            for(let i = 0; i < count; i++) {
+                const code = generateRandomCode();
+                codes.push({
+                    code,
+                    productId,
+                    productName: product.name,
+                    used: false,
+                    usedBy: null,
+                    createdAt: new Date().toISOString()
+                });
+            }
+            
+            localStorage.setItem('zerion_codes', JSON.stringify(codes));
+            alert(`✅ ${count} Code(s) für "${product.name}" generiert!`);
+            loadCodes();
+        }
+
+        function generateRandomCode() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let code = '';
+            for(let i = 0; i < 12; i++) {
+                code += chars.charAt(Math.floor(Math.random() * chars.length));
+                if((i + 1) % 4 === 0 && i < 11) code += '-';
+            }
+            return code;
+        }
+
+        function loadCodes() {
+            const codes = JSON.parse(localStorage.getItem('zerion_codes')) || [];
+            const list = document.getElementById('codeList');
+            
+            if(codes.length === 0) {
+                list.innerHTML = '<p style="color: #aaa;">Noch keine Codes generiert</p>';
+                return;
+            }
+            
+            list.innerHTML = codes.map(c => `
+                <div class="code-item">
+                    <div>
+                        <code style="font-size: 1.1rem; font-weight: bold; color: ${c.used ? 'var(--accent)' : 'var(--success)'};">${c.code}</code>
+                        <div style="color: #aaa; font-size: 0.9rem; margin-top: 0.3rem;">
+                            Produkt: ${c.productName} | 
+                            Status: ${c.used ? '❌ Eingelöst von ' + c.usedBy : '✅ Verfügbar'}
+                        </div>
+                    </div>
+                    <button onclick="copyCode('${c.code}')" style="background: var(--primary); border: none; color: black; padding: 0.5rem 1rem; border-radius: 5px; cursor: pointer; font-weight: bold;">📋 Kopieren</button>
+                </div>
+            `).join('');
+        }
+
+        function copyCode(code) {
+            navigator.clipboard.writeText(code);
+            alert(`Code kopiert: ${code}`);
+        }
+    </script>
+</body>
+</html>
