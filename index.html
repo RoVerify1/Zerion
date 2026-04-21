@@ -2,57 +2,299 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <title>ZERION | Shop</title>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZerionX Shop</title>
+    <style>
+        :root {
+            --bg-color: #0f0f13;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent: #00b06f; /* Roblox Greenish */
+            --text-main: #ffffff;
+            --text-sec: #a0a0a0;
+            --glass: blur(10px);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Header */
+        header {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 40px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo { font-size: 1.5rem; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
+        .admin-btn {
+            background: transparent;
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            padding: 8px 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .admin-btn:hover { background: var(--accent); color: #000; }
+
+        /* Shop Grid */
+        .shop-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            width: 100%;
+            max-width: 1200px;
+        }
+
+        .product-card {
+            background: var(--card-bg);
+            backdrop-filter: var(--glass);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 176, 111, 0.2);
+            border-color: var(--accent);
+        }
+
+        .product-img {
+            width: 100%;
+            height: 150px;
+            background: #1a1a20;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-sec);
+            font-size: 3rem;
+        }
+
+        .product-title { font-size: 1.2rem; margin-bottom: 10px; }
+        .product-price { font-size: 1.5rem; color: var(--accent); font-weight: bold; margin-bottom: 15px; }
+        .product-desc { color: var(--text-sec); font-size: 0.9rem; margin-bottom: 20px; flex-grow: 1; }
+
+        .buy-btn {
+            background: var(--accent);
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .buy-btn:hover { opacity: 0.9; transform: scale(1.02); }
+
+        /* Admin Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        .modal-content {
+            background: #1a1a20;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            border: 1px solid var(--accent);
+        }
+        .modal h2 { margin-bottom: 20px; color: var(--accent); }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 5px; color: var(--text-sec); }
+        .input-group input, .input-group textarea {
+            width: 100%;
+            padding: 10px;
+            background: #0f0f13;
+            border: 1px solid #333;
+            color: white;
+            border-radius: 5px;
+        }
+        .close-modal { float: right; cursor: pointer; font-size: 1.5rem; }
+        
+        /* Code Output Area for Admin */
+        #codeOutput {
+            width: 100%;
+            height: 100px;
+            background: #000;
+            color: #0f0;
+            font-family: monospace;
+            margin-top: 10px;
+            display: none;
+        }
+    </style>
 </head>
 <body>
-    <div class="background-waves"><div class="wave"></div><div class="wave"></div></div>
-    <div class="container">
-        <header>
-            <div class="logo-text">ZERION</div>
-            <nav>
-                <a href="index.html" class="active">Shop</a>
-                <a href="admin.html">Admin</a>
-            </nav>
-        </header>
 
-        <h1 style="text-align:center; margin-bottom: 3rem;">🛍️ DIGITAL STORE</h1>
-        
-        <div class="shop-grid" id="shopGrid">
-            <!-- Produkte laden hier -->
+    <header>
+        <div class="logo">ZerionX Shop</div>
+        <button class="admin-btn" onclick="openAdminLogin()">Admin Login</button>
+    </header>
+
+    <div class="shop-container" id="shopContainer">
+        <!-- Produkte werden hier per JS eingefügt -->
+    </div>
+
+    <!-- Admin Login Modal -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
+            <h2>Admin Zugang</h2>
+            <div class="input-group">
+                <label>Passwort</label>
+                <input type="password" id="adminPassword" placeholder="Passwort eingeben">
+            </div>
+            <button class="buy-btn" onclick="checkLogin()">Einloggen</button>
         </div>
+    </div>
 
-        <div style="text-align:center; margin-top: 4rem; padding: 2rem; background: var(--glass); border-radius: 20px;">
-            <h3>Wie funktioniert's?</h3>
-            <p>1. Kaufe via Discord.<br>2. Erhalte deinen Code.<br>3. Gib den Code im Roblox-Spiel ein.</p>
+    <!-- Admin Panel Modal -->
+    <div id="adminPanel" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('adminPanel')">&times;</span>
+            <h2>Produkt hinzufügen</h2>
+            <div class="input-group">
+                <label>Name</label>
+                <input type="text" id="prodName">
+            </div>
+            <div class="input-group">
+                <label>Preis (Robux)</label>
+                <input type="number" id="prodPrice">
+            </div>
+            <div class="input-group">
+                <label>Beschreibung</label>
+                <textarea id="prodDesc"></textarea>
+            </div>
+            <div class="input-group">
+                <label>Roblox Asset ID (Gamepass/Product ID)</label>
+                <input type="text" id="prodId" placeholder="z.B. 12345678">
+            </div>
+            <button class="buy-btn" onclick="addProduct()">Produkt Generieren</button>
+            
+            <textarea id="codeOutput" readonly></textarea>
+            <p style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">Kopiere den Code unten und füge ihn in das 'products' Array im HTML-Code ein!</p>
         </div>
     </div>
 
     <script>
-        window.onload = function() {
-            const products = JSON.parse(localStorage.getItem('zerion_products')) || [];
-            const grid = document.getElementById('shopGrid');
-            
-            if(products.length === 0) {
-                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#aaa;">Noch keine Produkte.</p>';
+        // --- KONFIGURATION ---
+        // Hier sind deine Produkte. Da du nur GitHub hast, musst du neue Produkte hier im Code einfügen.
+        // Nutze das Admin-Panel, um den Code dafür zu generieren.
+        let products = [
+            {
+                name: "VIP Status",
+                price: 100,
+                desc: "Erhalte VIP-Zugang und spezielle Befehle im Spiel.",
+                assetId: "0000000" // Ersetze dies mit deiner Gamepass ID
+            },
+            {
+                name: "Starter Pack",
+                price: 50,
+                desc: "Ein cooles Starter-Set für deinen Anfang.",
+                assetId: "0000000"
+            }
+        ];
+
+        const ADMIN_PASS = "KiBlox123"; // Ändere dieses Passwort!
+
+        // --- SHOP LOGIK ---
+        function renderShop() {
+            const container = document.getElementById('shopContainer');
+            container.innerHTML = '';
+
+            products.forEach(prod => {
+                const card = document.createElement('div');
+                card.className = 'product-card';
+                card.innerHTML = `
+                    <div class="product-img">📦</div>
+                    <div class="product-title">${prod.name}</div>
+                    <div class="product-desc">${prod.desc}</div>
+                    <div class="product-price">R$ ${prod.price}</div>
+                    <a href="https://www.roblox.com/game-pass/${prod.assetId}" target="_blank" class="buy-btn">Kaufen</a>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // --- ADMIN LOGIK ---
+        function openAdminLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).style.display = 'none';
+        }
+
+        function checkLogin() {
+            const input = document.getElementById('adminPassword').value;
+            if(input === ADMIN_PASS) {
+                closeModal('loginModal');
+                document.getElementById('adminPanel').style.display = 'flex';
+            } else {
+                alert("Falsches Passwort!");
+            }
+        }
+
+        function addProduct() {
+            const name = document.getElementById('prodName').value;
+            const price = document.getElementById('prodPrice').value;
+            const desc = document.getElementById('prodDesc').value;
+            const id = document.getElementById('prodId').value;
+
+            if(!name || !price || !id) {
+                alert("Bitte alle Felder ausfüllen!");
                 return;
             }
 
-            grid.innerHTML = products.map(p => `
-                <div class="product-card">
-                    <div class="product-image" style="background: linear-gradient(135deg, ${p.color}22, ${p.color}44)">${p.emoji}</div>
-                    <div class="product-info">
-                        <div class="product-title">${p.name}</div>
-                        <div class="product-price">${p.price} €</div>
-                        <p style="color:#aaa; font-size:0.9rem; margin-bottom:1rem;">${p.description}</p>
-                        <div style="background:rgba(255,0,85,0.1); border:1px solid var(--accent); padding:0.5rem; border-radius:5px; margin-bottom:1rem; text-align:center; color:var(--accent); font-weight:bold; font-size:0.8rem;">
-                            🔒 CODE NACH KAUF
-                        </div>
-                        <button onclick="alert('Kaufe via Discord-Ticket!')">🛒 Kaufen</button>
-                    </div>
-                </div>
-            `).join('');
-        };
+            // Generiere den JSON-String für das Produkt
+            const newProduct = {
+                name: name,
+                price: parseInt(price),
+                desc: desc,
+                assetId: id
+            };
+
+            const jsonCode = JSON.stringify(newProduct, null, 4);
+            
+            // Zeige den Code zum Kopieren an
+            const output = document.getElementById('codeOutput');
+            output.style.display = 'block';
+            output.value = jsonCode + ","; // Komma am Ende für das Array
+            
+            alert("Produkt-Code generiert! Kopiere den Text aus der schwarzen Box und füge ihn in das 'products' Array in der index.html Datei ein.");
+        }
+
+        // Init
+        renderShop();
     </script>
 </body>
 </html>
