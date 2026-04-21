@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>ZERION | Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="loginScreen" class="login-screen">
+        <div class="login-box">
+            <h2>🔐 ADMIN LOGIN</h2>
+            <input type="password" id="adminPass" placeholder="Passwort (Standard: admin123)">
+            <button onclick="checkLogin()">Einloggen</button>
+            <div id="loginError" class="error-msg">Falsches Passwort!</div>
+        </div>
+    </div>
+
+    <div id="mainContent" style="display:none;">
+        <div class="background-waves"><div class="wave"></div><div class="wave"></div></div>
+        <div class="container">
+            <header>
+                <div class="logo-text">ZERION // DASH</div>
+                <nav><a href="index.html">Shop</a><a href="#" onclick="logout()">Logout</a></nav>
+            </header>
+
+            <h1>Produkt erstellen</h1>
+            <div style="background:var(--glass); padding:2rem; border-radius:20px; margin-bottom:2rem;">
+                <input type="text" id="pName" placeholder="Produktname">
+                <input type="number" id="pPrice" placeholder="Preis (€)">
+                <input type="text" id="pEmoji" placeholder="Emoji (z.B. ⚔️)" value="📦">
+                <input type="text" id="pColor" placeholder="Farbe (#00f2ff)" value="#00f2ff">
+                <input type="text" id="pDesc" placeholder="Beschreibung">
+                
+                <div id="msgError" class="error-msg"></div>
+                <div id="msgSuccess" class="success-msg"></div>
+                
+                <button onclick="createProduct()">✅ Produkt speichern</button>
+                
+                <div id="codeDisplay" class="dev-code-display" style="display:none;"></div>
+            </div>
+
+            <h2>Deine Produkte</h2>
+            <div id="prodList" class="shop-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        if(sessionStorage.getItem('isAdmin') === 'true') {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainContent').style.display = 'block';
+            loadProducts();
+        }
+
+        function checkLogin() {
+            const pass = document.getElementById('adminPass').value;
+            if(pass === 'admin123' || pass === localStorage.getItem('zerion_admin_pass')) {
+                sessionStorage.setItem('isAdmin', 'true');
+                location.reload();
+            } else {
+                document.getElementById('loginError').style.display = 'block';
+            }
+        }
+
+        function logout() {
+            sessionStorage.removeItem('isAdmin');
+            location.reload();
+        }
+
+        function createProduct() {
+            const name = document.getElementById('pName').value;
+            const price = document.getElementById('pPrice').value;
+            const emoji = document.getElementById('pEmoji').value;
+            const color = document.getElementById('pColor').value;
+            const desc = document.getElementById('pDesc').value;
+            const errDiv = document.getElementById('msgError');
+            const sucDiv = document.getElementById('msgSuccess');
+            const codeDiv = document.getElementById('codeDisplay');
+
+            errDiv.style.display = 'none';
+            sucDiv.style.display = 'none';
+            codeDiv.style.display = 'none';
+
+            if(!name || !price) {
+                errDiv.innerText = "❌ Name und Preis sind Pflicht!";
+                errDiv.style.display = 'block';
+                return;
+            }
+
+            const code = 'ZER-' + Math.random().toString(36).substr(2, 4).toUpperCase() + '-' + Math.random().toString(36).substr(2, 4).toUpperCase();
+
+            const product = {
+                id: Date.now(),
+                name, price, emoji, color, description: desc,
+                devCode: code
+            };
+
+            let products = JSON.parse(localStorage.getItem('zerion_products')) || [];
+            products.push(product);
+            localStorage.setItem('zerion_products', JSON.stringify(products));
+
+            sucDiv.innerText = "✅ Produkt erstellt!";
+            sucDiv.style.display = 'block';
+            
+            codeDiv.innerHTML = `
+                <div style="font-size:0.8rem; color:#aaa;">KOPIERE DIESEN CODE FÜR DEN KUNDEN:</div>
+                <div>${code}</div>
+                <button onclick="navigator.clipboard.writeText('${code}'); alert('Kopiert!')" style="margin-top:10px; font-size:0.8rem; padding:5px;">📋 Kopieren</button>
+            `;
+            codeDiv.style.display = 'block';
+
+            loadProducts();
+            
+            document.getElementById('pName').value = '';
+            document.getElementById('pPrice').value = '';
+            document.getElementById('pDesc').value = '';
+        }
+
+        function loadProducts() {
+            const products = JSON.parse(localStorage.getItem('zerion_products')) || [];
+            document.getElementById('prodList').innerHTML = products.map(p => `
+                <div class="product-card" style="padding:1rem;">
+                    <h3>${p.emoji} ${p.name}</h3>
+                    <p style="color:var(--success)">${p.price} €</p>
+                    <p style="font-family:monospace; color:var(--primary); font-size:0.8rem;">Code: ${p.devCode}</p>
+                    <button onclick="deleteProd(${p.id})" style="background:var(--accent); margin-top:10px;">Löschen</button>
+                </div>
+            `).join('');
+        }
+
+        function deleteProd(id) {
+            if(!confirm('Wirklich löschen?')) return;
+            let products = JSON.parse(localStorage.getItem('zerion_products')) || [];
+            products = products.filter(p => p.id !== id);
+            localStorage.setItem('zerion_products', JSON.stringify(products));
+            loadProducts();
+        }
+    </script>
+</body>
+</html>
