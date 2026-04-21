@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>ZERION | Shop</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="background-waves"><div class="wave"></div><div class="wave"></div></div>
+    <div class="container">
+        <header>
+            <div class="logo-text">ZERION</div>
+            <nav>
+                <a href="index.html" class="active">Shop</a>
+                <a href="admin.html">Admin</a>
+            </nav>
+        </header>
+
+        <h1 style="text-align:center; margin-bottom: 3rem;">🛍️ DIGITAL STORE</h1>
+        
+        <div class="shop-grid" id="shopGrid">
+            <!-- Produkte laden hier -->
+        </div>
+
+        <div style="text-align:center; margin-top: 4rem; padding: 2rem; background: var(--glass); border-radius: 20px;">
+            <h3>Wie funktioniert's?</h3>
+            <p>1. Kaufe via Discord.<br>2. Erhalte deinen Code.<br>3. Gib den Code im Roblox-Spiel ein.</p>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const products = JSON.parse(localStorage.getItem('zerion_products')) || [];
+            const grid = document.getElementById('shopGrid');
+            
+            if(products.length === 0) {
+                grid.innerHTML = '<p style="grid-column:1/-1; text-align:center; color:#aaa;">Noch keine Produkte.</p>';
+                return;
+            }
+
+            grid.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <div class="product-image" style="background: linear-gradient(135deg, ${p.color}22, ${p.color}44)">${p.emoji}</div>
+                    <div class="product-info">
+                        <div class="product-title">${p.name}</div>
+                        <div class="product-price">${p.price} €</div>
+                        <p style="color:#aaa; font-size:0.9rem; margin-bottom:1rem;">${p.description}</p>
+                        <div style="background:rgba(255,0,85,0.1); border:1px solid var(--accent); padding:0.5rem; border-radius:5px; margin-bottom:1rem; text-align:center; color:var(--accent); font-weight:bold; font-size:0.8rem;">
+                            🔒 CODE NACH KAUF
+                        </div>
+                        <button onclick="alert('Kaufe via Discord-Ticket!')">🛒 Kaufen</button>
+                    </div>
+                </div>
+            `).join('');
+        };
+    </script>
+</body>
+</html>
