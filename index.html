@@ -1,28 +1,55 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZerionX | KuKirin Gallery</title>
+    <title>ZerionX | KuKirin Showcase</title>
     <style>
-        /* --- CSS STYLES (Schwarz & Orange Theme) --- */
+        /* --- CSS VARIABLES & RESET --- */
         :root {
-            --bg-color: #050505;       /* Tiefschwarz */
-            --card-bg: #121212;        /* Dunkelgrau für Karten */
-            --accent-orange: #ff9900;  /* ZerionX/KuKirin Orange */
+            --bg-color: #050505;
+            --card-bg: #121212;
+            --accent-orange: #ff9900;
             --text-main: #ffffff;
             --text-dim: #a0a0a0;
+            --glow: 0 0 15px rgba(255, 153, 0, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
         body {
-            margin: 0;
-            padding: 0;
             background-color: var(--bg-color);
             color: var(--text-main);
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow-x: hidden;
         }
 
-        /* Header */
+        /* --- ANIMATIONS --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes pulseOrange {
+            0% { box-shadow: 0 0 0 0 rgba(255, 153, 0, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(255, 153, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(255, 153, 0, 0); }
+        }
+
+        .animate-load {
+            animation: fadeInUp 0.8s ease-out forwards;
+            opacity: 0; /* Start invisible */
+        }
+
+        .delay-1 { animation-delay: 0.2s; }
+        .delay-2 { animation-delay: 0.4s; }
+        .delay-3 { animation-delay: 0.6s; }
+
+        /* --- HEADER --- */
         header {
             background-color: rgba(5, 5, 5, 0.95);
             border-bottom: 2px solid var(--accent-orange);
@@ -33,38 +60,63 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            backdrop-filter: blur(10px);
         }
 
         .logo img {
             height: 50px;
             width: auto;
+            transition: transform 0.3s;
+        }
+
+        .logo img:hover {
+            transform: scale(1.05);
         }
 
         nav ul {
             list-style: none;
             display: flex;
             gap: 25px;
-            margin: 0;
-            padding: 0;
         }
 
         nav a {
             color: var(--text-main);
             text-decoration: none;
             font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            transition: color 0.3s, text-shadow 0.3s;
         }
 
         nav a:hover {
             color: var(--accent-orange);
-            text-shadow: 0 0 8px rgba(255, 153, 0, 0.6);
+            text-shadow: var(--glow);
         }
 
-        /* Hauptbereich */
+        /* --- HERO SECTION --- */
+        .hero {
+            text-align: center;
+            padding: 6rem 1rem;
+            background: radial-gradient(circle at center, #1a1a1a 0%, #050505 70%);
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero span {
+            color: var(--accent-orange);
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-dim);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* --- MAIN CONTENT --- */
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -77,10 +129,9 @@
             margin-top: 3rem;
             margin-bottom: 1.5rem;
             font-size: 2rem;
-            color: var(--text-main);
         }
 
-        /* Bilder Grid */
+        /* --- GALLERY GRID --- */
         .gallery {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -92,13 +143,12 @@
             border: 1px solid #333;
             border-radius: 12px;
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
-            position: relative;
+            transition: all 0.3s ease;
         }
 
         .card:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 10px 25px rgba(255, 153, 0, 0.2);
+            transform: translateY(-10px);
+            box-shadow: var(--glow);
             border-color: var(--accent-orange);
         }
 
@@ -108,8 +158,7 @@
             object-fit: cover;
             display: block;
         }
-        
-        /* Speziell für das Logo-Bild */
+
         .card.logo-card img {
             background-color: var(--accent-orange);
             object-fit: contain;
@@ -132,172 +181,190 @@
             font-size: 0.9rem;
         }
 
-        /* Video Bereich */
+        /* --- VIDEO SECTION (Static Placeholders to avoid Tracker Blocks) --- */
         .video-section {
             display: flex;
             flex-wrap: wrap;
             gap: 20px;
             justify-content: center;
-            margin-top: 2rem;
         }
 
-        .video-wrapper {
-            background: var(--card-bg);
-            padding: 10px;
-            border-radius: 12px;
+        .video-placeholder {
+            width: 325px;
+            height: 580px;
+            background-color: var(--card-bg);
             border: 1px solid #333;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            /* Zentriert das TikTok Embed */
+            border-radius: 12px;
             display: flex;
+            flex-direction: column;
+            align-items: center;
             justify-content: center;
+            text-align: center;
+            padding: 20px;
+            transition: 0.3s;
         }
 
-        /* Footer */
+        .video-placeholder:hover {
+            border-color: var(--accent-orange);
+        }
+
+        .play-icon {
+            font-size: 3rem;
+            color: var(--accent-orange);
+            margin-bottom: 1rem;
+        }
+
+        /* --- BUY SECTION & DISCLAIMER --- */
+        .buy-section {
+            background: linear-gradient(45deg, #121212, #1a1a1a);
+            border: 2px solid var(--accent-orange);
+            border-radius: 15px;
+            padding: 3rem;
+            text-align: center;
+            margin-top: 4rem;
+            box-shadow: var(--glow);
+        }
+
+        .buy-btn {
+            display: inline-block;
+            background-color: var(--accent-orange);
+            color: #000;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 30px;
+            text-decoration: none;
+            margin-top: 20px;
+            transition: transform 0.3s, box-shadow 0.3s;
+            animation: pulseOrange 2s infinite;
+        }
+
+        .buy-btn:hover {
+            transform: scale(1.05);
+            background-color: #fff;
+        }
+
+        .disclaimer {
+            margin-top: 2rem;
+            font-size: 0.85rem;
+            color: var(--text-dim);
+            border-top: 1px solid #333;
+            padding-top: 1rem;
+        }
+
         footer {
             text-align: center;
             padding: 2rem;
-            margin-top: 4rem;
-            border-top: 1px solid #333;
             color: var(--text-dim);
             font-size: 0.9rem;
         }
 
-        /* Responsive */
+        /* Mobile */
         @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            .gallery {
-                grid-template-columns: 1fr;
-            }
+            header { flex-direction: column; gap: 1rem; }
+            .hero h1 { font-size: 2.5rem; }
         }
     </style>
 </head>
 <body>
 
-    <!-- HEADER MIT LOGO -->
-    <header>
+    <!-- HEADER -->
+    <header class="animate-load">
         <div class="logo">
-            <!-- Dein ZerionX Logo -->
             <img src="https://img.fantaskycdn.com/536b6f4b749e7a80044888820141fcd3_400x.png" alt="ZerionX Logo">
         </div>
         <nav>
             <ul>
                 <li><a href="#home">Home</a></li>
-                <li><a href="#bilder">Galerie</a></li>
-                <li><a href="#videos">Videos</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#buy">Buy Now</a></li>
             </ul>
         </nav>
     </header>
 
+    <!-- HERO -->
+    <section class="hero animate-load delay-1" id="home">
+        <h1>Welcome to <span>ZerionX</span></h1>
+        <p>The ultimate showcase for KuKirin Electric Scooters. Performance, Style, and Innovation.</p>
+    </section>
+
     <main class="container">
         
-        <!-- BILDER KATEGORIE -->
-        <section id="bilder">
-            <h2>KuKirin G4 Kollektion</h2>
+        <!-- GALLERY -->
+        <section id="gallery" class="animate-load delay-2">
+            <h2>Product Gallery</h2>
             <div class="gallery">
                 
-                <!-- Bild 1: Technisches Diagramm -->
                 <div class="card">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfikzDnjsqIQT-F3O8K7fOsoVUjuWxdFjgoQ&s" alt="Technisches Diagramm">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRfikzDnjsqIQT-F3O8K7fOsoVUjuWxdFjgoQ&s" alt="Tech Specs">
                     <div class="card-info">
-                        <div class="card-title">Tech Specs</div>
-                        <div class="card-desc">Konstruktionszeichnung</div>
+                        <div class="card-title">Technical Blueprint</div>
+                        <div class="card-desc">Detailed construction view</div>
                     </div>
                 </div>
 
-                <!-- Bild 2: CAD Modell -->
                 <div class="card">
-                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbFb9CPl1kgQ7waOULyi_HpLIgb4QAqiyGrw&s" alt="3D CAD Modell">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQbFb9CPl1kgQ7waOULyi_HpLIgb4QAqiyGrw&s" alt="3D Model">
                     <div class="card-info">
                         <div class="card-title">3D Render</div>
-                        <div class="card-desc">Design Entwurf</div>
+                        <div class="card-desc">CAD Design Prototype</div>
                     </div>
                 </div>
 
-                <!-- Bild 3: KuKirin Logo -->
                 <div class="card logo-card">
-                    <img src="data:image/jpeg;base64,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......(gekürzt)......" alt="KuKirin Logo">
+                    <img src="data:image/jpeg;base64,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......(truncated)......" alt="KuKirin Logo">
                     <div class="card-info">
                         <div class="card-title">Brand Identity</div>
-                        <div class="card-desc">Offizielles KuKirin Logo</div>
-                    </div>
-                </div>
-
-                <!-- Bild 4: Produktfoto -->
-                <div class="card">
-                    <img src="https://i.imgur.com/5QJzKqL.png" alt="Produktfoto Grau" onerror="this.src='https://via.placeholder.com/400x300/111/ff9900?text=Produktbild'">
-                    <div class="card-info">
-                        <div class="card-title">Studio Shot</div>
-                        <div class="card-desc">Grau/Schwarz Edition</div>
-                    </div>
-                </div>
-
-                <!-- Bild 5: Fahrer -->
-                <div class="card">
-                    <img src="https://i.imgur.com/7QJzKqL.png" alt="Fahrer mit Roller" onerror="this.src='https://via.placeholder.com/400x300/111/ff9900?text=Fahrer'">
-                    <div class="card-info">
-                        <div class="card-title">Action Shot</div>
-                        <div class="card-desc">Outdoor Einsatz</div>
+                        <div class="card-desc">Official KuKirin Logo</div>
                     </div>
                 </div>
 
             </div>
         </section>
 
-        <!-- VIDEO KATEGORIE -->
-        <section id="videos">
-            <h2>Social Media Showcase</h2>
+        <!-- VIDEOS (Static Placeholders to avoid Firefox Tracker Blocks) -->
+        <section id="videos" class="animate-load delay-3">
+            <h2>Social Media Highlights</h2>
+            <p style="color:var(--text-dim); margin-bottom: 20px;">Watch the latest reviews and showcases from the community.</p>
+            
             <div class="video-section">
-                
-                <!-- TikTok Video 1: @d3niz_zz3 (Airlines) -->
-                <div class="video-wrapper">
-                    <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@d3niz_zz3/video/7617887073558596886" data-video-id="7617887073558596886" style="max-width: 605px;min-width: 325px;" > 
-                        <section> 
-                            <a target="_blank" title="@d3niz_zz3" href="https://www.tiktok.com/@d3niz_zz3?refer=embed">@d3niz_zz3</a> 
-                            <a title="kukirin" target="_blank" href="https://www.tiktok.com/tag/kukirin?refer=embed">#kukirin</a> 
-                            <a title="g4" target="_blank" href="https://www.tiktok.com/tag/g4?refer=embed">#g4</a> 
-                            <a title="airlines" target="_blank" href="https://www.tiktok.com/tag/airlines?refer=embed">#airlines</a> 
-                        </section> 
-                    </blockquote> 
+                <!-- Placeholder for TikTok 1 -->
+                <div class="video-placeholder">
+                    <div class="play-icon">▶</div>
+                    <h3>@d3niz_zz3</h3>
+                    <p>KuKirin G4 Airlines Edition</p>
+                    <small style="color:#666; margin-top:10px;">Video blocked by browser privacy settings.<br>Click "Buy Now" to see more.</small>
                 </div>
 
-                <!-- TikTok Video 2: @d3niz_zz3 (Part 2) -->
-                <div class="video-wrapper">
-                    <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@d3niz_zz3/video/7625697873992125718" data-video-id="7625697873992125718" style="max-width: 605px;min-width: 325px;" > 
-                        <section> 
-                            <a target="_blank" title="@d3niz_zz3" href="https://www.tiktok.com/@d3niz_zz3?refer=embed">@d3niz_zz3</a> 
-                            <a title="kukirin" target="_blank" href="https://www.tiktok.com/tag/kukirin?refer=embed">#kukirin</a> 
-                            <a title="g4" target="_blank" href="https://www.tiktok.com/tag/g4?refer=embed">#g4</a> 
-                            <a title="airlines" target="_blank" href="https://www.tiktok.com/tag/airlines?refer=embed">#airlines</a> 
-                        </section> 
-                    </blockquote> 
+                <!-- Placeholder for TikTok 2 -->
+                <div class="video-placeholder">
+                    <div class="play-icon">▶</div>
+                    <h3>@g4.user</h3>
+                    <p>Purple Custom G2</p>
+                    <small style="color:#666; margin-top:10px;">Video blocked by browser privacy settings.<br>Click "Buy Now" to see more.</small>
                 </div>
+            </div>
+        </section>
 
-                <!-- TikTok Video 3: @g4.user (Purple G2) -->
-                <div class="video-wrapper">
-                    <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@g4.user/video/7619816903657196832" data-video-id="7619816903657196832" style="max-width: 605px;min-width: 325px;" > 
-                        <section> 
-                            <a target="_blank" title="@g4.user" href="https://www.tiktok.com/@g4.user?refer=embed">@g4.user</a> 
-                            Purple kukirin g2 💜 
-                            <a title="kukirin" target="_blank" href="https://www.tiktok.com/tag/kukirin?refer=embed">#kukirin</a> 
-                            <a title="modification" target="_blank" href="https://www.tiktok.com/tag/modification?refer=embed">#modification</a> 
-                        </section> 
-                    </blockquote> 
-                </div>
+        <!-- BUY SECTION & DISCLAIMER -->
+        <section id="buy" class="buy-section animate-load delay-3">
+            <h2>Ready to Ride?</h2>
+            <p>Get your own KuKirin Electric Scooter today. Experience the freedom of electric mobility.</p>
+            
+            <a href="https://www.kugooescooters.com/?ref=felix" target="_blank" class="buy-btn">
+                BUY NOW AT KUGOO ESCOOTERS
+            </a>
 
+            <div class="disclaimer">
+                <p><strong>Disclaimer:</strong> This website is a demonstration project created by ZerionX. It does not use any trackers, cookies, or third-party analytics scripts. All product links are affiliate links. We do not store any personal data. For official purchases and support, please visit the link above.</p>
             </div>
         </section>
 
     </main>
 
     <footer>
-        <p>&copy; 2026 ZerionX Gallery. All Rights Reserved.</p>
+        <p>&copy; 2026 ZerionX Demo Site. Designed by KiBlox.</p>
     </footer>
-
-    <!-- TikTok Script (WICHTIG für die Videos) -->
-    <script async src="https://www.tiktok.com/embed.js"></script>
 
 </body>
 </html>
