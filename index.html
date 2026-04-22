@@ -3,298 +3,201 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZerionX Shop</title>
-    <style>
-        :root {
-            --bg-color: #0f0f13;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --accent: #00b06f; /* Roblox Greenish */
-            --text-main: #ffffff;
-            --text-sec: #a0a0a0;
-            --glass: blur(10px);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        
-        body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 20px;
-        }
-
-        /* Header */
-        header {
-            width: 100%;
-            max-width: 1200px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 20px 0;
-            margin-bottom: 40px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .logo { font-size: 1.5rem; font-weight: bold; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; }
-        .admin-btn {
-            background: transparent;
-            border: 1px solid var(--accent);
-            color: var(--accent);
-            padding: 8px 16px;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .admin-btn:hover { background: var(--accent); color: #000; }
-
-        /* Shop Grid */
-        .shop-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 20px;
-            width: 100%;
-            max-width: 1200px;
-        }
-
-        .product-card {
-            background: var(--card-bg);
-            backdrop-filter: var(--glass);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 176, 111, 0.2);
-            border-color: var(--accent);
-        }
-
-        .product-img {
-            width: 100%;
-            height: 150px;
-            background: #1a1a20;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-sec);
-            font-size: 3rem;
-        }
-
-        .product-title { font-size: 1.2rem; margin-bottom: 10px; }
-        .product-price { font-size: 1.5rem; color: var(--accent); font-weight: bold; margin-bottom: 15px; }
-        .product-desc { color: var(--text-sec); font-size: 0.9rem; margin-bottom: 20px; flex-grow: 1; }
-
-        .buy-btn {
-            background: var(--accent);
-            color: #000;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 5px;
-            font-weight: bold;
-            cursor: pointer;
-            width: 100%;
-            transition: 0.2s;
-            text-decoration: none;
-            display: inline-block;
-        }
-        .buy-btn:hover { opacity: 0.9; transform: scale(1.02); }
-
-        /* Admin Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-        }
-        .modal-content {
-            background: #1a1a20;
-            padding: 30px;
-            border-radius: 10px;
-            width: 90%;
-            max-width: 500px;
-            border: 1px solid var(--accent);
-        }
-        .modal h2 { margin-bottom: 20px; color: var(--accent); }
-        .input-group { margin-bottom: 15px; }
-        .input-group label { display: block; margin-bottom: 5px; color: var(--text-sec); }
-        .input-group input, .input-group textarea {
-            width: 100%;
-            padding: 10px;
-            background: #0f0f13;
-            border: 1px solid #333;
-            color: white;
-            border-radius: 5px;
-        }
-        .close-modal { float: right; cursor: pointer; font-size: 1.5rem; }
-        
-        /* Code Output Area for Admin */
-        #codeOutput {
-            width: 100%;
-            height: 100px;
-            background: #000;
-            color: #0f0;
-            font-family: monospace;
-            margin-top: 10px;
-            display: none;
-        }
-    </style>
+    <title>KuKirin - Premium Electric Scooters</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="images/logo.png">
 </head>
 <body>
-
-    <header>
-        <div class="logo">ZerionX Shop</div>
-        <button class="admin-btn" onclick="openAdminLogin()">Admin Login</button>
-    </header>
-
-    <div class="shop-container" id="shopContainer">
-        <!-- Produkte werden hier per JS eingefügt -->
-    </div>
-
-    <!-- Admin Login Modal -->
-    <div id="loginModal" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('loginModal')">&times;</span>
-            <h2>Admin Zugang</h2>
-            <div class="input-group">
-                <label>Passwort</label>
-                <input type="password" id="adminPassword" placeholder="Passwort eingeben">
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="logo">
+                <img src="images/logo.png" alt="KuKirin Logo">
+                <span>KuKirin</span>
             </div>
-            <button class="buy-btn" onclick="checkLogin()">Einloggen</button>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#products">Produkte</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#video">Video</a></li>
+                <li><a href="#contact">Kontakt</a></li>
+            </ul>
+            <div class="burger">
+                <div class="line1"></div>
+                <div class="line2"></div>
+                <div class="line3"></div>
+            </div>
         </div>
-    </div>
+    </nav>
 
-    <!-- Admin Panel Modal -->
-    <div id="adminPanel" class="modal">
-        <div class="modal-content">
-            <span class="close-modal" onclick="closeModal('adminPanel')">&times;</span>
-            <h2>Produkt hinzufügen</h2>
-            <div class="input-group">
-                <label>Name</label>
-                <input type="text" id="prodName">
-            </div>
-            <div class="input-group">
-                <label>Preis (Robux)</label>
-                <input type="number" id="prodPrice">
-            </div>
-            <div class="input-group">
-                <label>Beschreibung</label>
-                <textarea id="prodDesc"></textarea>
-            </div>
-            <div class="input-group">
-                <label>Roblox Asset ID (Gamepass/Product ID)</label>
-                <input type="text" id="prodId" placeholder="z.B. 12345678">
-            </div>
-            <button class="buy-btn" onclick="addProduct()">Produkt Generieren</button>
-            
-            <textarea id="codeOutput" readonly></textarea>
-            <p style="font-size: 0.8rem; color: #aaa; margin-top: 5px;">Kopiere den Code unten und füge ihn in das 'products' Array im HTML-Code ein!</p>
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Die Zukunft der <span class="highlight">Mobilität</span></h1>
+            <p>Premium Electric Scooters von KuKirin - Kraftvoll, Schnell, Zuverlässig</p>
+            <a href="#products" class="btn-primary">Jetzt Entdecken</a>
         </div>
-    </div>
+        <div class="hero-image">
+            <img src="images/scooter1.jpg" alt="KuKirin Scooter">
+        </div>
+    </section>
 
-    <script>
-        // --- KONFIGURATION ---
-        // Hier sind deine Produkte. Da du nur GitHub hast, musst du neue Produkte hier im Code einfügen.
-        // Nutze das Admin-Panel, um den Code dafür zu generieren.
-        let products = [
-            {
-                name: "VIP Status",
-                price: 100,
-                desc: "Erhalte VIP-Zugang und spezielle Befehle im Spiel.",
-                assetId: "0000000" // Ersetze dies mit deiner Gamepass ID
-            },
-            {
-                name: "Starter Pack",
-                price: 50,
-                desc: "Ein cooles Starter-Set für deinen Anfang.",
-                assetId: "0000000"
-            }
-        ];
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2 class="section-title">Unsere <span class="highlight">Modelle</span></h2>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="images/scooter1.jpg" alt="KuKirin G4">
+                    <h3>KuKirin G4</h3>
+                    <p class="price">ab €1.299</p>
+                    <ul class="specs">
+                        <li>⚡ 60V 32Ah Akku</li>
+                        <li>🚀 Bis zu 65 km/h</li>
+                        <li>📏 Reichweite: 80+ km</li>
+                        <li>💪 Dual Motor 2x2000W</li>
+                    </ul>
+                    <button class="btn-secondary">Mehr Infos</button>
+                </div>
 
-        const ADMIN_PASS = "KiBlox123"; // Ändere dieses Passwort!
+                <div class="product-card featured">
+                    <div class="badge">Bestseller</div>
+                    <img src="images/scooter2.jpg" alt="KuKirin G2 Max">
+                    <h3>KuKirin G2 Max</h3>
+                    <p class="price">ab €899</p>
+                    <ul class="specs">
+                        <li>⚡ 48V 24Ah Akku</li>
+                        <li>🚀 Bis zu 55 km/h</li>
+                        <li>📏 Reichweite: 60+ km</li>
+                        <li>💪 Dual Motor 2x1000W</li>
+                    </ul>
+                    <button class="btn-secondary">Mehr Infos</button>
+                </div>
 
-        // --- SHOP LOGIK ---
-        function renderShop() {
-            const container = document.getElementById('shopContainer');
-            container.innerHTML = '';
+                <div class="product-card">
+                    <img src="images/scooter3.jpg" alt="KuKirin S4 Pro">
+                    <h3>KuKirin S4 Pro</h3>
+                    <p class="price">ab €1.599</p>
+                    <ul class="specs">
+                        <li>⚡ 72V 40Ah Akku</li>
+                        <li>🚀 Bis zu 75 km/h</li>
+                        <li>📏 Reichweite: 100+ km</li>
+                        <li>💪 Dual Motor 2x3000W</li>
+                    </ul>
+                    <button class="btn-secondary">Mehr Infos</button>
+                </div>
+            </div>
+        </div>
+    </section>
 
-            products.forEach(prod => {
-                const card = document.createElement('div');
-                card.className = 'product-card';
-                card.innerHTML = `
-                    <div class="product-img">📦</div>
-                    <div class="product-title">${prod.name}</div>
-                    <div class="product-desc">${prod.desc}</div>
-                    <div class="product-price">R$ ${prod.price}</div>
-                    <a href="https://www.roblox.com/game-pass/${prod.assetId}" target="_blank" class="buy-btn">Kaufen</a>
-                `;
-                container.appendChild(card);
-            });
-        }
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="container">
+            <h2 class="section-title">Warum <span class="highlight">KuKirin?</span></h2>
+            <div class="features-grid">
+                <div class="feature-box">
+                    <div class="icon">⚡</div>
+                    <h3>Leistungsstark</h3>
+                    <p>Dual-Motor-Systeme mit bis zu 6000W Gesamtleistung für maximale Performance.</p>
+                </div>
+                <div class="feature-box">
+                    <div class="icon">🔋</div>
+                    <h3>Lange Reichweite</h3>
+                    <p>Hochkapazitäts-Akkus für Reichweiten von 60-100+ km pro Ladung.</p>
+                </div>
+                <div class="feature-box">
+                    <div class="icon">🛡️</div>
+                    <h3>Sicher & Robust</h3>
+                    <p>Doppelte Bremssysteme, LED-Beleuchtung und robuste Konstruktion.</p>
+                </div>
+                <div class="feature-box">
+                    <div class="icon">🎨</div>
+                    <h3>Premium Design</h3>
+                    <p>Modernes, aerodynamisches Design mit hochwertigen Materialien.</p>
+                </div>
+            </div>
+        </div>
+    </section>
 
-        // --- ADMIN LOGIK ---
-        function openAdminLogin() {
-            document.getElementById('loginModal').style.display = 'flex';
-        }
+    <!-- Video Section -->
+    <section id="video" class="video-section">
+        <div class="container">
+            <h2 class="section-title">KuKirin in <span class="highlight">Aktion</span></h2>
+            <div class="video-container">
+                <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@bmx_2_kacper/video/7622240139305176353" data-video-id="7622240139305176353" style="max-width: 605px;min-width: 325px;" > 
+                    <section> 
+                        <a target="_blank" title="@bmx_2_kacper" href="https://www.tiktok.com/@bmx_2_kacper?refer=embed">@bmx_2_kacper</a> 
+                        G4 owner:@g4_wisssss 
+                        <a title="escooter" target="_blank" href="https://www.tiktok.com/tag/escooter?refer=embed">#escooter</a> 
+                        <a title="edit" target="_blank" href="https://www.tiktok.com/tag/edit?refer=embed">#edit</a> 
+                        <a title="ausom" target="_blank" href="https://www.tiktok.com/tag/ausom?refer=embed">#ausom</a> 
+                        <a title="kukirin" target="_blank" href="https://www.tiktok.com/tag/kukirin?refer=embed">#kukirin</a> 
+                        <a target="_blank" title="♬ oryginalny dźwięk - ️Kapi X" href="https://www.tiktok.com/music/oryginalny-dźwięk-7622240170863102753?refer=embed">♬ oryginalny dźwięk - ️Kapi X</a> 
+                    </section> 
+                </blockquote> 
+            </div>
+        </div>
+    </section>
 
-        function closeModal(id) {
-            document.getElementById(id).style.display = 'none';
-        }
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <h2 class="section-title">Kontaktiere <span class="highlight">Uns</span></h2>
+            <div class="contact-content">
+                <div class="contact-info">
+                    <h3>Bereit für dein Abenteuer?</h3>
+                    <p>Schreib uns eine Nachricht oder besuche unseren Showroom!</p>
+                    <div class="info-item">
+                        <span>📧</span>
+                        <p>info@kukirin.de</p>
+                    </div>
+                    <div class="info-item">
+                        <span>📞</span>
+                        <p>+49 123 456789</p>
+                    </div>
+                    <div class="info-item">
+                        <span>📍</span>
+                        <p>Musterstraße 123, 12345 Berlin</p>
+                    </div>
+                </div>
+                <form class="contact-form">
+                    <input type="text" placeholder="Dein Name" required>
+                    <input type="email" placeholder="Deine E-Mail" required>
+                    <textarea placeholder="Deine Nachricht" rows="5" required></textarea>
+                    <button type="submit" class="btn-primary">Nachricht Senden</button>
+                </form>
+            </div>
+        </div>
+    </section>
 
-        function checkLogin() {
-            const input = document.getElementById('adminPassword').value;
-            if(input === ADMIN_PASS) {
-                closeModal('loginModal');
-                document.getElementById('adminPanel').style.display = 'flex';
-            } else {
-                alert("Falsches Passwort!");
-            }
-        }
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="KuKirin Logo">
+                    <span>KuKirin</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#">Impressum</a>
+                    <a href="#">Datenschutz</a>
+                    <a href="#">AGB</a>
+                    <a href="#">FAQ</a>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-icon">📘</a>
+                    <a href="#" class="social-icon">📸</a>
+                    <a href="#" class="social-icon">🐦</a>
+                    <a href="#" class="social-icon">▶️</a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 KuKirin Electric Scooters. Alle Rechte vorbehalten.</p>
+            </div>
+        </div>
+    </footer>
 
-        function addProduct() {
-            const name = document.getElementById('prodName').value;
-            const price = document.getElementById('prodPrice').value;
-            const desc = document.getElementById('prodDesc').value;
-            const id = document.getElementById('prodId').value;
-
-            if(!name || !price || !id) {
-                alert("Bitte alle Felder ausfüllen!");
-                return;
-            }
-
-            // Generiere den JSON-String für das Produkt
-            const newProduct = {
-                name: name,
-                price: parseInt(price),
-                desc: desc,
-                assetId: id
-            };
-
-            const jsonCode = JSON.stringify(newProduct, null, 4);
-            
-            // Zeige den Code zum Kopieren an
-            const output = document.getElementById('codeOutput');
-            output.style.display = 'block';
-            output.value = jsonCode + ","; // Komma am Ende für das Array
-            
-            alert("Produkt-Code generiert! Kopiere den Text aus der schwarzen Box und füge ihn in das 'products' Array in der index.html Datei ein.");
-        }
-
-        // Init
-        renderShop();
-    </script>
+    <script src="js/script.js"></script>
+    <script async src="https://www.tiktok.com/embed.js"></script>
 </body>
 </html>
