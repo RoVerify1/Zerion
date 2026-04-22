@@ -5,281 +5,219 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZerionX Gallery</title>
     <style>
-        /* --- Grundlegende Einstellungen & Variablen --- */
+        /* --- CSS STYLES (Schwarz & Orange) --- */
         :root {
-            --bg-color: #0a0a0a;       /* Sehr dunkles Schwarz */
-            --card-bg: #161616;        /* Etwas helleres Grau für Karten */
-            --primary-orange: #ff9900; /* Das Orange aus dem Logo */
+            --bg-color: #050505;       /* Tiefschwarz */
+            --card-bg: #121212;        /* Dunkelgrau für Karten */
+            --accent-orange: #ff9900;  /* ZerionX Orange */
             --text-main: #ffffff;
-            --text-secondary: #b3b3b3;
-            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+            --text-dim: #a0a0a0;
         }
 
         body {
+            margin: 0;
+            padding: 0;
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: var(--font-family);
-            line-height: 1.6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        a { text-decoration: none; color: inherit; transition: 0.3s; }
-        ul { list-style: none; }
-
-        /* --- Header & Navigation --- */
+        /* Header */
         header {
-            background-color: rgba(10, 10, 10, 0.95);
-            border-bottom: 2px solid var(--primary-orange);
+            background-color: rgba(5, 5, 5, 0.95);
+            border-bottom: 2px solid var(--accent-orange);
             padding: 1rem 5%;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
-        .logo-container img {
-            height: 50px; /* Höhe des Logos anpassen */
+        .logo img {
+            height: 50px; /* Logo Größe */
             width: auto;
-            display: block;
         }
 
         nav ul {
+            list-style: none;
             display: flex;
-            gap: 2rem;
+            gap: 20px;
+            margin: 0;
+            padding: 0;
         }
 
         nav a {
-            font-weight: 600;
+            color: var(--text-main);
+            text-decoration: none;
+            font-weight: bold;
             font-size: 1.1rem;
-            color: var(--text-secondary);
+            transition: color 0.3s;
         }
 
-        nav a:hover, nav a.active {
-            color: var(--primary-orange);
-            text-shadow: 0 0 10px rgba(255, 153, 0, 0.5);
+        nav a:hover {
+            color: var(--accent-orange);
         }
 
-        /* --- Hero Section (Optional) --- */
-        .hero {
-            text-align: center;
-            padding: 4rem 1rem;
-            background: radial-gradient(circle at center, #1a1a1a 0%, #0a0a0a 70%);
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .hero span {
-            color: var(--primary-orange);
-        }
-
-        /* --- Hauptinhalt Container --- */
+        /* Hauptbereich */
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem 1rem;
+            padding: 2rem;
         }
 
-        .section-title {
-            font-size: 1.8rem;
-            margin-bottom: 1.5rem;
-            border-left: 5px solid var(--primary-orange);
-            padding-left: 1rem;
+        h2 {
+            border-left: 5px solid var(--accent-orange);
+            padding-left: 15px;
             margin-top: 3rem;
+            margin-bottom: 1.5rem;
+            font-size: 2rem;
         }
 
-        /* --- Galerie Grid (Bilder) --- */
-        .gallery-grid {
+        /* Bilder Grid */
+        .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
         }
 
         .card {
             background-color: var(--card-bg);
-            border-radius: 12px;
-            overflow: hidden;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
             border: 1px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.3s, box-shadow 0.3s;
         }
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(255, 153, 0, 0.15);
-            border-color: var(--primary-orange);
+            box-shadow: 0 0 15px rgba(255, 153, 0, 0.3);
+            border-color: var(--accent-orange);
         }
 
         .card img {
             width: 100%;
-            height: 200px;
+            height: 250px;
             object-fit: cover;
             display: block;
         }
 
-        .card-content {
-            padding: 1rem;
+        .card-info {
+            padding: 15px;
         }
 
         .card-title {
-            font-size: 1.1rem;
+            color: var(--accent-orange);
             font-weight: bold;
-            margin-bottom: 0.5rem;
+            margin-bottom: 5px;
         }
 
-        .card-desc {
-            font-size: 0.9rem;
-            color: var(--text-secondary);
-        }
-
-        /* --- Video Section --- */
-        .video-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-            gap: 2rem;
+        /* Video Bereich */
+        .video-section {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
         }
 
         .video-wrapper {
-            background-color: var(--card-bg);
+            background: var(--card-bg);
             padding: 10px;
-            border-radius: 12px;
+            border-radius: 10px;
             border: 1px solid #333;
         }
 
-        video {
-            width: 100%;
-            border-radius: 8px;
-            display: block;
-        }
-
-        /* --- Footer --- */
+        /* Footer */
         footer {
             text-align: center;
             padding: 2rem;
             margin-top: 4rem;
             border-top: 1px solid #333;
-            color: var(--text-secondary);
-            font-size: 0.9rem;
-        }
-
-        /* --- Mobile Anpassung --- */
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            nav ul {
-                gap: 1rem;
-                font-size: 0.9rem;
-            }
-
-            .video-grid {
-                grid-template-columns: 1fr;
-            }
+            color: var(--text-dim);
         }
     </style>
 </head>
 <body>
 
-    <!-- Header mit Logo -->
+    <!-- HEADER MIT LOGO -->
     <header>
-        <div class="logo-container">
-            <!-- Dein Logo Link -->
-            <a href="#">
-                <img src="https://img.fantaskycdn.com/536b6f4b749e7a80044888820141fcd3_400x.png" alt="ZerionX Logo">
-            </a>
+        <div class="logo">
+            <img src="https://img.fantaskycdn.com/536b6f4b749e7a80044888820141fcd3_400x.png" alt="ZerionX Logo">
         </div>
         <nav>
             <ul>
-                <li><a href="#home" class="active">Home</a></li>
+                <li><a href="#home">Home</a></li>
                 <li><a href="#bilder">Bilder</a></li>
                 <li><a href="#videos">Videos</a></li>
-                <li><a href="#kontakt">Kontakt</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Hero Bereich -->
-    <section class="hero" id="home">
-        <h1>Willkommen bei <span>ZerionX</span></h1>
-        <p>Entdecke unsere neuesten Projekte, Bilder und Videos.</p>
-    </section>
-
     <main class="container">
         
-        <!-- KATEGORIE: BILDER -->
+        <!-- BILDER KATEGORIE -->
         <section id="bilder">
-            <h2 class="section-title">Bilder Galerie</h2>
-            <div class="gallery-grid">
+            <h2>Bilder Galerie</h2>
+            <div class="gallery">
                 
-                <!-- Bild Karte 1 -->
+                <!-- Bild 1: Hier ist dein Base64 Bild eingefügt -->
                 <div class="card">
-                    <!-- Ersetze '2.png' mit deinem echten Dateinamen -->
-                    <img src="2.png" alt="Projekt Vorschau 1" onerror="this.src='https://via.placeholder.com/400x300/161616/ff9900?text=Bild+nicht+gefunden'">
-                    <div class="card-content">
-                        <div class="card-title">Projekt Alpha</div>
-                        <div class="card-desc">Ein kurzer Beschreibungstext zum Bild.</div>
+                    <img src="data:image/jpeg;base64,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1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/Xh1n+kNb+vDrP8ASAkB2t/X......(gekürzt für Übersicht)......" alt="Display Dashboard">
+                    <div class="card-info">
+                        <div class="card-title">Dashboard Display</div>
+                        <div>Original Base64 Upload</div>
                     </div>
                 </div>
 
-                <!-- Bild Karte 2 (Beispiel Platzhalter) -->
+                <!-- Bild 2: Platzhalter für deine Datei -->
                 <div class="card">
-                    <img src="3.png" alt="Projekt Vorschau 2" onerror="this.src='https://via.placeholder.com/400x300/161616/ff9900?text=Bild+3'">
-                    <div class="card-content">
-                        <div class="card-title">Map Design</div>
-                        <div class="card-desc">Neues Layout für den Shop.</div>
+                    <!-- Hier wird '2.png' geladen, wenn die Datei im Ordner liegt -->
+                    <img src="2.png" alt="Bild 2" onerror="this.src='https://via.placeholder.com/400x300/111/ff9900?text=2.png+fehlt'">
+                    <div class="card-info">
+                        <div class="card-title">Upload 2</div>
+                        <div>Dateiname: 2.png</div>
                     </div>
                 </div>
 
-                <!-- Bild Karte 3 -->
+                <!-- Bild 3: Platzhalter -->
                 <div class="card">
-                    <img src="4.png" alt="Projekt Vorschau 3" onerror="this.src='https://via.placeholder.com/400x300/161616/ff9900?text=Bild+4'">
-                    <div class="card-content">
-                        <div class="card-title">UI Konzept</div>
-                        <div class="card-desc">Dark Mode Interface Design.</div>
+                    <img src="3.png" alt="Bild 3" onerror="this.src='https://via.placeholder.com/400x300/111/ff9900?text=3.png+fehlt'">
+                    <div class="card-info">
+                        <div class="card-title">Upload 3</div>
+                        <div>Weitere Bilder hier einfügen</div>
                     </div>
                 </div>
 
             </div>
         </section>
 
-        <!-- KATEGORIE: VIDEOS -->
+        <!-- VIDEO KATEGORIE -->
         <section id="videos">
-            <h2 class="section-title">Video Showcase</h2>
-            <div class="video-grid">
+            <h2>Videos & TikToks</h2>
+            <div class="video-section">
                 
-                <!-- Video 1 -->
+                <!-- TikTok Embed (Dein Link) -->
                 <div class="video-wrapper">
-                    <!-- Ersetze 'video1.mp4' mit deinem Dateinamen -->
-                    <video controls poster="thumbnail1.jpg">
-                        <source src="video1.mp4" type="video/mp4">
-                        Dein Browser unterstützt das Video-Tag nicht.
-                    </video>
-                    <div class="card-content">
-                        <div class="card-title">Gameplay Trailer</div>
-                    </div>
+                    <blockquote class="tiktok-embed" cite="https://www.tiktok.com/@stingster.mx4/video/7518052825499438338" data-video-id="7518052825499438338" style="max-width: 605px;min-width: 325px;" > 
+                        <section> 
+                            <a target="_blank" title="@stingster.mx4" href="https://www.tiktok.com/@stingster.mx4?refer=embed">@stingster.mx4</a> 
+                            KuKirin G4 2025 Sound 😩 
+                            <a title="kukirin" target="_blank" href="https://www.tiktok.com/tag/kukirin?refer=embed">#kukirin</a> 
+                            <a title="kugoo" target="_blank" href="https://www.tiktok.com/tag/kugoo?refer=embed">#kugoo</a> 
+                            <a title="g4" target="_blank" href="https://www.tiktok.com/tag/g4?refer=embed">#g4</a> 
+                        </section> 
+                    </blockquote> 
                 </div>
 
-                <!-- Video 2 -->
+                <!-- Beispiel für normales MP4 Video (falls du mal welche hast) -->
+                <!-- 
                 <div class="video-wrapper">
-                    <video controls poster="thumbnail2.jpg">
-                        <source src="video2.mp4" type="video/mp4">
-                        Dein Browser unterstützt das Video-Tag nicht.
+                    <video controls width="100%">
+                        <source src="mein-video.mp4" type="video/mp4">
                     </video>
-                    <div class="card-content">
-                        <div class="card-title">Tutorial: Installation</div>
-                    </div>
-                </div>
+                </div> 
+                -->
 
             </div>
         </section>
@@ -287,8 +225,11 @@
     </main>
 
     <footer>
-        <p>&copy; 2026 ZerionX. Alle Rechte vorbehalten. Designed by KiBlox.</p>
+        <p>&copy; 2026 ZerionX Gallery. Design by KiBlox.</p>
     </footer>
+
+    <!-- TikTok Script (Wichtig für das Video) -->
+    <script async src="https://www.tiktok.com/embed.js"></script>
 
 </body>
 </html>
